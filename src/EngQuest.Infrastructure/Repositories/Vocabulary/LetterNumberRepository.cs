@@ -1,4 +1,6 @@
-﻿using EngQuest.Domain.Objectives;
+﻿using System.Data;
+using Dapper;
+using EngQuest.Domain.Objectives;
 using Microsoft.EntityFrameworkCore;
 using EngQuest.Domain.Shared;
 using EngQuest.Domain.Vocabulary.LetterNumbers;
@@ -6,42 +8,30 @@ using EngQuest.Infrastructure.Extensions;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class LetterNumberRepository(ApplicationDbContext _dbContext)
+public class LetterNumberRepository()
 {
-    public async Task<List<string>> GetRandomLetterNumbersAsync(Word word, int count, CancellationToken cancellationToken)
+    public async Task<List<string>> GetRandomLetterNumbersAsync(Word word, int count, IDbConnection dbConnection)
     {
-        Text? wordText = word.Text.GetWord();
+        string wordText = word.Text.GetWord();
+        
+        const string sql = """
+                            WITH target AS (SELECT id, text, number
+                                            FROM letter_numbers
+                                            WHERE text = @Text
+                                            LIMIT 1),
+                            random AS (SELECT text, number
+                                       FROM letter_numbers
+                                       WHERE (SELECT COUNT(*) FROM target) = 0 
+                                              OR (id != (SELECT id FROM target) 
+                                              AND number BETWEEN (SELECT number FROM target) - (@Count / 2) 
+                                                         AND (SELECT number FROM target) + (@Count / 2) + 1)           
+                                       ORDER BY random()
+                                       LIMIT @Count)
+                            SELECT text FROM random
+                            """;
+        
+        IEnumerable<string> letterNumbers = await dbConnection.QueryAsync<string>(sql, new { Text = wordText, Count = count });
 
-        LetterNumber? letterNumber = await _dbContext
-            .Set<LetterNumber>()
-            .AsNoTracking()
-            .Where(ln => wordText == ln.Text)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        double halfOfACount = Math.Ceiling(count / 2.0);
-
-        List<LetterNumber> letterNumbers = await _dbContext
-            .Set<LetterNumber>()
-            .AsNoTracking()
-            .OrderBy(ln => Guid.NewGuid())
-            .WhereIf(letterNumber is not null, ln => ln.Id != letterNumber!.Id
-                                                     && letterNumber.Number.Value - halfOfACount <= (int)ln.Number && (int)ln.Number <= letterNumber.Number.Value + halfOfACount)
-            .Take(count)
-            .ToListAsync(cancellationToken);
-
-        if (letterNumbers.Count < count)
-        {
-            var retrievedLetterNumberIds = letterNumbers.Select(ln => ln.Id).ToList();
-
-            letterNumbers.AddRange(await _dbContext
-                .Set<LetterNumber>()
-                .AsNoTracking()
-                .OrderBy(ln => Guid.NewGuid())
-                .Where(ln => !retrievedLetterNumberIds.Contains(ln.Id))
-                .Take(count - letterNumbers.Count)
-                .ToListAsync(cancellationToken));
-        }
-
-        return letterNumbers.Select(ln => ln.Text.Value).ToList();
+        return letterNumbers.ToList();
     }
 }

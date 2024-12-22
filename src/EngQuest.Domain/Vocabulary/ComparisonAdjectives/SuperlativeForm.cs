@@ -10,6 +10,11 @@ public sealed record SuperlativeForm(string Value)
     {
         return text.Value.StartsWith("most", StringComparison.InvariantCulture) || text.Value.EndsWith("est", StringComparison.InvariantCulture);
     }
+    
+    public static bool Is(string text)
+    {
+        return text.StartsWith("most", StringComparison.InvariantCulture) || text.EndsWith("est", StringComparison.InvariantCulture);
+    }
 
     public static SuperlativeForm From(Text comparisonAdjectiveText, SyllablesCount count)
     {

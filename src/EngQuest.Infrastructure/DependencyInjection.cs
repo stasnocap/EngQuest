@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Asp.Versioning;
 using Dapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -57,7 +58,7 @@ public static class DependencyInjection
         AddHealthChecks(services, configuration);
 
         AddApiVersioning(services);
-        
+
         AddBackgroundJobs(services, configuration);
 
         return services;
@@ -84,10 +85,7 @@ public static class DependencyInjection
         services.AddScoped<PrimaryVerbRepository>();
         services.AddScoped<LetterNumberRepository>();
         services.AddScoped<ModalVerbRepository>();
-        services.AddScoped<AdverbRepository>();
-        services.AddScoped<CompoundRepository>();
         services.AddScoped<NumberWithNounRepository>();
-        services.AddScoped<PronounRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
@@ -95,6 +93,22 @@ public static class DependencyInjection
             new SqlConnectionFactory(connectionString));
 
         SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+
+        AddSnakeCaseMapping();
+    }
+
+    private static void AddSnakeCaseMapping()
+    {
+        foreach (Type type in new Assembly[] { typeof(DependencyInjection).Assembly, typeof(Application.DependencyInjection).Assembly }
+                    .SelectMany(x => x.GetTypes())
+                    .Where(t => t.GetCustomAttribute<SnakeCaseMappingAttribute>() != null))
+        {
+            SqlMapper.SetTypeMap(type, new CustomPropertyTypeMap(type, (t, columnName) =>
+            {
+                string propertyName = columnName.Replace("_", "", StringComparison.OrdinalIgnoreCase);
+                return t.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase) ?? throw new InvalidOperationException($"Property '{propertyName}' not found on type '{t}'");
+            }));
+        }
     }
 
     private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)

@@ -138,8 +138,8 @@ csharp_using_directive_placement = outside_namespace:error
 csharp_new_line_before_catch =true
 csharp_new_line_before_else =true
 csharp_new_line_before_finally =true
-csharp_new_line_before_members_in_anonymous_types = false,
-csharp_new_line_before_members_in_object_initializers = false,
+csharp_new_line_before_members_in_anonymous_types = false
+csharp_new_line_before_members_in_object_initializers = false
 csharp_new_line_before_open_brace = all
 csharp_new_line_between_query_expression_clauses = true
 
@@ -387,6 +387,15 @@ dotnet_diagnostic.IDE0072.severity = none
 
 # CA1515: Consider making public types internal
 dotnet_diagnostic.CA1515.severity = none
+
+# Make anonymous function static (IDE0320)
+dotnet_diagnostic.IDE0320.severity = none
+
+# Use expression body for methods (IDE0022)
+dotnet_diagnostic.IDE0022.severity = none
+
+# Use range operator (IDE0057)
+dotnet_diagnostic.IDE0057.severity = none
 
 # Ignore ef core 'Migrations' folder
 [**/Migrations/**]

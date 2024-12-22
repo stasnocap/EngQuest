@@ -4,9 +4,9 @@ namespace EngQuest.Domain.Objectives;
 
 public static class WordDecoratorService
 {
-    public static void Decorate(Word word, List<string> words)
+    public static void Decorate(string word, List<string> words)
     {
-        Match match = Regex.Match(word.Text.Value, @"^\w+(\W)$");
+        Match match = Regex.Match(word, @"^\w+(\W)$");
         if (match.Success)
         {
             AppendSymbol(words, match.Groups[1].Value);

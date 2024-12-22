@@ -1,61 +1,89 @@
-﻿using EngQuest.Domain.Objectives;
-using Microsoft.EntityFrameworkCore;
-using EngQuest.Domain.Shared;
+﻿using System.Data;
+using Dapper;
+using EngQuest.Application.Abstractions.Data;
+using EngQuest.Domain.Objectives;
 using EngQuest.Domain.Vocabulary.ComparisonAdjectives;
-using EngQuest.Infrastructure.Extensions;
+using EngQuest.Infrastructure.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class ComparisonAdjectiveRepository(ApplicationDbContext _dbContext)
+public class ComparisonAdjectiveRepository
 {
-    public async Task<List<string>> GetRandomComparisonAdjectivesAsync(Word word, int count, CancellationToken cancellationToken)
+    public async Task<List<string>> GetRandomComparisonAdjectivesAsync(Word word, int count, IDbConnection dbConnection)
     {
-        Text wordText = word.Text.GetWord();
+        string wordText = word.Text.GetWord();
 
-        ComparisonAdjective? comparisonAdjective = await _dbContext.Set<ComparisonAdjective>()
-            .FirstOrDefaultAsync(ca => wordText == ca.Text
-                                       || (string)wordText == (string)ca.ComparativeForm
-                                       || (string)wordText == (string)ca.SuperlativeForm, cancellationToken);
+        const string sql = """
+                           WITH target AS (SELECT id, text, comparative_form, superlative_form
+                                           FROM comparison_adjectives
+                                           WHERE text = @Text OR comparative_form = @Text OR superlative_form = @Text
+                                           LIMIT 1),
+                           random AS (SELECT text, comparative_form, superlative_form
+                                      FROM comparison_adjectives
+                                      WHERE (SELECT COUNT(*) FROM target) = 0 OR id != (SELECT id FROM target)
+                                      ORDER BY random()
+                                      LIMIT @Count)
+                           SELECT text, comparative_form, superlative_form FROM random
+                           UNION ALL
+                           SELECT text, comparative_form, superlative_form FROM target
+                           """;
 
-        List<ComparisonAdjective> comparisonAdjectives = await _dbContext
-            .Set<ComparisonAdjective>()
-            .WhereIf(comparisonAdjective is not null, ca => ca.Id != comparisonAdjective!.Id)
-            .OrderBy(ca => Guid.NewGuid())
-            .Take(count)
-            .ToListAsync(cancellationToken);
+        var comparisonAdjectives = (await dbConnection.QueryAsync<ComparisonAdjectiveDto>(sql, new { Text = wordText, Count = count })).ToList();
 
-        if (comparisonAdjective is not null)
+        ComparisonAdjectiveDto? target = null;
+        if (comparisonAdjectives.Count > 0)
         {
-            if (wordText == comparisonAdjective.Text)
+            ComparisonAdjectiveDto maybeTarget = comparisonAdjectives[^1];
+
+            if (maybeTarget.Text == wordText || maybeTarget.ComparativeForm == wordText || maybeTarget.SuperlativeForm == wordText)
             {
-                return comparisonAdjectives.Select(ca => ca.Text.Value).ToList();
+                target = maybeTarget;
+                comparisonAdjectives.Remove(maybeTarget);
+            }
+        }
+        
+        if (target is not null)
+        {
+            if (wordText == target.Text)
+            {
+                return comparisonAdjectives.Select(ca => ca.Text).ToList();
             }
 
-            if (wordText.Value == comparisonAdjective.ComparativeForm.Value)
+            if (wordText == target.ComparativeForm)
             {
-                return comparisonAdjectives.Select(ca => ca.ComparativeForm.Value).ToList();
+                return comparisonAdjectives.Select(ca => ca.ComparativeForm).ToList();
             }
 
-            if (wordText.Value == comparisonAdjective.SuperlativeForm.Value)
+            if (wordText == target.SuperlativeForm)
             {
-                return comparisonAdjectives.Select(ca => ca.SuperlativeForm.Value).ToList();
+                return comparisonAdjectives.Select(ca => ca.SuperlativeForm).ToList();
             }
         }
         else
         {
             if (ComparativeForm.Is(wordText))
             {
-                return comparisonAdjectives.Select(ca => ca.ComparativeForm.Value).ToList();
+                return comparisonAdjectives.Select(ca => ca.ComparativeForm).ToList();
             }
 
             if (SuperlativeForm.Is(wordText))
             {
-                return comparisonAdjectives.Select(ca => ca.SuperlativeForm.Value).ToList();
+                return comparisonAdjectives.Select(ca => ca.SuperlativeForm).ToList();
             }
 
-            return comparisonAdjectives.Select(ca => ca.Text.Value).ToList();
+            return comparisonAdjectives.Select(ca => ca.Text).ToList();
         }
 
         throw new ApplicationException();
     }
+
+    [SnakeCaseMapping]
+    public class ComparisonAdjectiveDto
+    {
+        public required string Text { get; init; }
+
+        public required string ComparativeForm { get; init; }
+
+        public required string SuperlativeForm { get; init; }
+    };
 }

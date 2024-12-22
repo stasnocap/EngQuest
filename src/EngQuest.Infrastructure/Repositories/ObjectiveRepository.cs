@@ -11,14 +11,4 @@ public class ObjectiveRepository(ApplicationDbContext dbContext) : Repository<Ob
             .Set<Objective>()
             .FirstOrDefaultAsync(x => x.Id == objectiveId && x.QuestIds.Any(y => y.Value == questId), cancellationToken);
     }
-    
-    public Task<Objective?> GetRandomAsync(int questId, CancellationToken cancellationToken)
-    {
-        return DbContext
-            .Set<Objective>()
-            .AsNoTracking()
-            .Where(x => x.QuestIds.Any(y => y.Value == questId))
-            .OrderBy(x => Guid.NewGuid())
-            .FirstOrDefaultAsync(cancellationToken);
-    }
 }

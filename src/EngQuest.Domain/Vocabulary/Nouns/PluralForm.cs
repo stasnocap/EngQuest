@@ -20,7 +20,7 @@ public sealed record PluralForm(string Value)
 
     private static string GeneratePluralForm(string text)
     {
-        if (text.EndsWith("on", StringComparison.InvariantCulture) && text[text.Length - 3] != 'o')
+        if (text.EndsWith("on", StringComparison.InvariantCulture) && text[^3] != 'o')
         {
             return text[..^2] + "a";
         }
@@ -44,7 +44,7 @@ public sealed record PluralForm(string Value)
             return text[..^2] + "ves";
         }
 
-        if (text.EndsWith('y') && Letters.Consonants.Contains(text[text.Length - 2]))
+        if (text.EndsWith('y') && Letters.Consonants.Contains(text[^2]))
         {
             return text[..^1] + "ies";
         }

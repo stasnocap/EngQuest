@@ -45,8 +45,7 @@ internal sealed class AuthenticationService(HttpClient httpClient) : IAuthentica
             usersSegmentName,
             StringComparison.InvariantCultureIgnoreCase);
 
-        string userIdentityId = locationHeader.Substring(
-            userSegmentValueIndex + usersSegmentName.Length);
+        string userIdentityId = locationHeader.Substring(userSegmentValueIndex + usersSegmentName.Length);
 
         return userIdentityId;
     }

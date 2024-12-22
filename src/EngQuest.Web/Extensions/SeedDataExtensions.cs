@@ -17,6 +17,7 @@ namespace EngQuest.Web.Extensions;
 
 [SuppressMessage("Major Code Smell", "S125:Sections of code should not be commented out")]
 [SuppressMessage("Major Code Smell", "S1144:Unused private types or members should be removed")]
+[SuppressMessage("CodeQuality", "IDE0051:Remove unused private members")]
 internal static class SeedDataExtensions
 {
     public static void SeedData(this IApplicationBuilder app)
@@ -27,9 +28,9 @@ internal static class SeedDataExtensions
         using IDbConnection connection = sqlConnectionFactory.CreateConnection();
 
         InsertQuests(connection);
-        InsertObjectives(connection);
-        InsertObjectiveQuestIds(connection);
-        InsertWords(connection);
+        // InsertObjectives(connection);
+        // InsertObjectiveQuestIds(connection);
+        // InsertWords(connection);
         
         InsertAdjectives(connection);
         InsertAdverbs(connection);

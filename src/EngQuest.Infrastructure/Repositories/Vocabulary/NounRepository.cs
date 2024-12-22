@@ -1,51 +1,77 @@
-﻿using EngQuest.Domain.Objectives;
-using Microsoft.EntityFrameworkCore;
-using EngQuest.Domain.Shared;
+﻿using System.Data;
+using Dapper;
+using EngQuest.Application.Abstractions.Data;
+using EngQuest.Domain.Objectives;
 using EngQuest.Domain.Vocabulary.Nouns;
-using EngQuest.Infrastructure.Extensions;
+using EngQuest.Infrastructure.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class NounRepository(ApplicationDbContext _dbContext)
+public class NounRepository()
 {
-    public async Task<List<string>> GetRandomNounsAsync(Word word, int count, CancellationToken cancellationToken)
+    public async Task<List<string>> GetRandomNounsAsync(Word word, int count, IDbConnection dbConnection)
     {
-        Text? wordText = word.Text.GetWord();
+        string wordText = word.Text.GetWord();
 
-        Noun? noun = await _dbContext.Set<Noun>()
-            .FirstOrDefaultAsync(n => wordText == n.Text || (string)wordText == (string)n.PluralForm
-                , cancellationToken);
+        const string sql = """
+                           WITH target AS (SELECT id, text, plural_form
+                                           FROM nouns
+                                           WHERE text = @Text OR plural_form = @Text
+                                           LIMIT 1),
+                           random AS (SELECT text, plural_form
+                                      FROM nouns
+                                      WHERE (SELECT COUNT(*) FROM target) = 0 OR id != (SELECT id FROM target)
+                                      ORDER BY random()
+                                      LIMIT @Count)
+                           SELECT text, plural_form FROM random
+                           UNION ALL
+                           SELECT text, plural_form FROM target
+                           """;
 
-        List<Noun> nouns = await _dbContext
-            .Set<Noun>()
-            .AsNoTracking()
-            .WhereIf(noun is not null, n => n.Id != noun!.Id)
-            .OrderBy(n => Guid.NewGuid())
-            .Take(count)
-            .ToListAsync(cancellationToken);
+        var nouns = (await dbConnection.QueryAsync<NounDto>(sql, new { Text = wordText, Count = count })).ToList();
 
-        if (noun is not null)
+        NounDto? target = null;
+        if (nouns.Count > 0)
         {
-            if (wordText == noun.Text)
+            NounDto maybeTarget = nouns[^1];
+
+            if (maybeTarget.Text == wordText || maybeTarget.PluralForm == wordText)
             {
-                return nouns.Select(n => n.Text.Value).ToList();
+                target = maybeTarget;
+                nouns.Remove(maybeTarget);
+            }
+        }
+        
+        if (target is not null)
+        {
+            if (wordText == target.Text)
+            {
+                return nouns.Select(n => n.Text).ToList();
             }
 
-            if ((string)wordText == (string)noun.PluralForm)
+            if (wordText == target.PluralForm)
             {
-                return nouns.Select(n => n.PluralForm.Value).ToList();
+                return nouns.Select(n => n.PluralForm).ToList();
             }
         }
         else
         {
             if (PluralForm.Is(word.Text))
             {
-                return nouns.Select(n => n.PluralForm.Value).ToList();
+                return nouns.Select(n => n.PluralForm).ToList();
             }
 
-            return nouns.Select(n => n.Text.Value).ToList();
+            return nouns.Select(n => n.Text).ToList();
         }
 
         throw new ApplicationException();
     }
+    
+    [SnakeCaseMapping]
+    public class NounDto
+    {
+        public required string Text { get; init; }
+
+        public required string PluralForm { get; init; }
+    };
 }

@@ -10,6 +10,11 @@ public sealed record ComparativeForm(string Value)
     {
         return text.Value.StartsWith("more", StringComparison.InvariantCulture) || text.Value.EndsWith("er", StringComparison.InvariantCulture);
     }
+    
+    public static bool Is(string text)
+    {
+        return text.StartsWith("more", StringComparison.InvariantCulture) || text.EndsWith("er", StringComparison.InvariantCulture);
+    }
 
     public static ComparativeForm From(Text comparisonAdjectiveText, SyllablesCount count)
     {

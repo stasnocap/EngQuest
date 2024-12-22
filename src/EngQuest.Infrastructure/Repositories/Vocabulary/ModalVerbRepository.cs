@@ -1,61 +1,89 @@
-﻿using EngQuest.Domain.Objectives;
-using Microsoft.EntityFrameworkCore;
-using EngQuest.Domain.Shared;
+﻿using System.Data;
+using Dapper;
+using EngQuest.Application.Abstractions.Data;
+using EngQuest.Domain.Objectives;
 using EngQuest.Domain.Vocabulary.ModalVerbs;
-using EngQuest.Infrastructure.Extensions;
+using EngQuest.Infrastructure.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class ModalVerbRepository(ApplicationDbContext _dbContext)
+public class ModalVerbRepository
 {
-    public async Task<List<string>> GetRandomModalVerbsAsync(Word word, int count, CancellationToken cancellationToken)
+    public async Task<List<string>> GetRandomModalVerbsAsync(Word word, int count, IDbConnection dbConnection)
     {
-        Text? wordText = word.Text.GetWord();
+        string wordText = word.Text.GetWord();
 
-        ModalVerb? modalVerb = await _dbContext.Set<ModalVerb>()
-            .FirstOrDefaultAsync(mv => wordText == mv.Text
-                                       || (string)wordText == (string)mv.FullNegativeForm
-                                       || (string)wordText == (string)mv.ShortNegativeForm, cancellationToken);
+        const string sql = """
+                           WITH target AS (SELECT id, text, full_negative_form, short_negative_form
+                                           FROM modal_verbs
+                                           WHERE text = @Text OR full_negative_form = @Text OR short_negative_form = @Text
+                                           LIMIT 1),
+                           random AS (SELECT text, full_negative_form, short_negative_form
+                                      FROM modal_verbs
+                                      WHERE (SELECT COUNT(*) FROM target) = 0 OR id != (SELECT id FROM target)
+                                      ORDER BY random()
+                                      LIMIT @Count)
+                           SELECT text, full_negative_form, short_negative_form FROM random
+                           UNION ALL
+                           SELECT text, full_negative_form, short_negative_form FROM target
+                           """;
 
-        List<ModalVerb> modalVerbs = await _dbContext
-            .Set<ModalVerb>()
-            .WhereIf(modalVerb is not null, mv => mv.Id != modalVerb!.Id)
-            .OrderBy(mv => Guid.NewGuid())
-            .Take(count)
-            .ToListAsync(cancellationToken);
+        var modalVerbs = (await dbConnection.QueryAsync<ModalVerbDto>(sql, new { Text = wordText, Count = count })).ToList();
 
-        if (modalVerb is not null)
+        ModalVerbDto? target = null;
+        if (modalVerbs.Count > 0)
         {
-            if (wordText == modalVerb.Text)
+            ModalVerbDto maybeTarget = modalVerbs[^1];
+
+            if (maybeTarget.Text == wordText || maybeTarget.FullNegativeForm == wordText || maybeTarget.ShortNegativeForm == wordText)
             {
-                return modalVerbs.Select(mv => mv.Text.Value).ToList();
+                target = maybeTarget;
+                modalVerbs.Remove(maybeTarget);
+            }
+        }
+        
+        if (target is not null)
+        {
+            if (wordText == target.Text)
+            {
+                return modalVerbs.Select(mv => mv.Text).ToList();
             }
 
-            if ((string)wordText == (string)modalVerb.FullNegativeForm)
+            if (wordText == target.FullNegativeForm)
             {
-                return modalVerbs.Select(mv => mv.FullNegativeForm.Value).ToList();
+                return modalVerbs.Select(mv => mv.FullNegativeForm).ToList();
             }
 
-            if ((string)wordText == (string)modalVerb.ShortNegativeForm)
+            if (wordText == target.ShortNegativeForm)
             {
-                return modalVerbs.Select(mv => mv.ShortNegativeForm.Value).ToList();
+                return modalVerbs.Select(mv => mv.ShortNegativeForm).ToList();
             }
         }
         else
         {
             if (FullNegativeForm.Is(word.Text))
             {
-                return modalVerbs.Select(mv => mv.FullNegativeForm.Value).ToList();
+                return modalVerbs.Select(mv => mv.FullNegativeForm).ToList();
             }
 
             if (ShortNegativeForm.Is(word.Text))
             {
-                return modalVerbs.Select(mv => mv.ShortNegativeForm.Value).ToList();
+                return modalVerbs.Select(mv => mv.ShortNegativeForm).ToList();
             }
 
-            return modalVerbs.Select(mv => mv.Text.Value).ToList();
+            return modalVerbs.Select(mv => mv.Text).ToList();
         }
 
         throw new ApplicationException();
     }
+    
+    [SnakeCaseMapping]
+    public class ModalVerbDto
+    {
+        public required string Text { get; init; }
+
+        public required string FullNegativeForm { get; init; }
+
+        public required string ShortNegativeForm { get; init; }
+    };
 }

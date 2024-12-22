@@ -1,4 +1,4 @@
-﻿namespace EngQuest.Application.Objectives.GetObjective;
+﻿namespace EngQuest.Application.Objectives.GetRandomObjective;
 
 public sealed class ObjectiveResponse
 {

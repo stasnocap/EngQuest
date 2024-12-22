@@ -2,7 +2,6 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using EngQuest.Application.Objectives.CompleteObjective;
-using EngQuest.Application.Objectives.GetObjective;
 using EngQuest.Application.Objectives.GetRandomObjective;
 using EngQuest.Domain.Abstractions;
 using EngQuest.Domain.Objectives;
