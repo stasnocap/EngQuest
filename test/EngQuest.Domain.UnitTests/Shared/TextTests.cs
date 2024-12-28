@@ -16,9 +16,9 @@ public  class TextTests
         var text = new Text(textStr);
         
         // Act
-        Text result = text.GetWord();
+        string result = text.GetWord();
         
         // Assert
-        result.Value.Should().Be(correct);
+        result.Should().Be(correct);
     }
 }
