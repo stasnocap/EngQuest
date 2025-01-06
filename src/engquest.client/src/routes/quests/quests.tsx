@@ -26,6 +26,7 @@ export default function Quests() {
   }, []);
 
   const navigateToInfo = (quest: Quest) => { navigate(`/quests/${quest.id}/info`, { state: { quest } }); };
+  const navigateToObjective = (quest: Quest) => { navigate(`/quests/${quest.id}`, { state: { quest } }); };
 
   return loading ? (<></>) : (
     <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
@@ -54,10 +55,8 @@ export default function Quests() {
               <Button className="bg-primary-100" isLoading={loading} isDisabled={isQuestDisabled} onClick={() => navigateToInfo(quest)}>
                 Подробнее
               </Button>
-              <Button color="primary" isLoading={loading} isDisabled={isQuestDisabled}>
-                <Link to={quest.id.toString()} className="after:absolute after:inset-0 text-primary-50">
-                  Старт!
-                </Link>
+              <Button color="primary" isLoading={loading} isDisabled={isQuestDisabled} onClick={() => navigateToObjective(quest)}>
+                Старт!
               </Button>
             </CardFooter>
           </Card>);

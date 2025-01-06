@@ -1,8 +1,8 @@
-import {Button, ButtonGroup, Divider} from "@nextui-org/react";
+import {BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Divider} from "@nextui-org/react";
 import React, {useEffect, useState} from "react";
 import {BackspaceIcon} from "../../icons/backspace-icon.tsx";
-import {getRandomObjective, completeObjective, CompleteObjectiveResponse, GainExperienceResult} from "./quests.ts";
-import {useParams} from "react-router-dom";
+import {getRandomObjective, completeObjective, CompleteObjectiveResponse, GainExperienceResult, Quest} from "./quests.ts";
+import {useLocation, useParams} from "react-router-dom";
 import {experiencePerFirstQuest, experienceToAchiveFirstLevel, useUser} from "../../providers/user-provider.tsx";
 
 interface Objective {
@@ -103,6 +103,8 @@ export default function Objective() {
   const [revalidateCounter, setRevalidateCounter] = useState(0);
   const {level, updateLevel} = useUser();
   const [gainExperienceResult, setGainExperienceResult] = useState<GainExperienceResult | null>(null);
+  const location = useLocation();
+  const {quest}: { quest: Quest } = location.state;
 
   useEffect(() => {
     setLoading(true);
@@ -222,6 +224,10 @@ export default function Objective() {
 
   return loading ? (<></>) : (
     <>
+      <Breadcrumbs itemClasses={{item: "text-lg"}} underline="hover" className="mb-3" color="primary">
+        <BreadcrumbItem href="/quests">Квеcты</BreadcrumbItem>
+        <BreadcrumbItem href={`/quests/${quest.id}/info`}>Квест {quest.id}: {quest.name}</BreadcrumbItem>
+      </Breadcrumbs>
       <div className="flex justify-between text-lg md:text-3xl items-center">
         <div className="flex-1">
           <div className="text-primary">
