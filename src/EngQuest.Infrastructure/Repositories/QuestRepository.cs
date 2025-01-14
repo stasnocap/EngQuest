@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using EngQuest.Domain.Quests;
+using EngQuest.Application.Abstractions.Repositories;
 
 namespace EngQuest.Infrastructure.Repositories;
 

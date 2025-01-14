@@ -1,4 +1,5 @@
 ﻿using EngQuest.Application.Abstractions.Messaging;
+using EngQuest.Application.Abstractions.Repositories;
 using EngQuest.Domain.Abstractions;
 using EngQuest.Domain.Shared;
 using EngQuest.Domain.Vocabulary;

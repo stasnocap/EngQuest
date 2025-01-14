@@ -11,9 +11,9 @@ using EngQuest.Application.Abstractions.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class PrimaryVerbRepository()
+public static class PrimaryVerbRepository
 {
-    public async Task<List<string>> GetRandomPrimaryVerbsAsync(Word word, int count, IDbConnection dbConnection)
+    public async static Task<List<string>> GetRandomPrimaryVerbsAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
 

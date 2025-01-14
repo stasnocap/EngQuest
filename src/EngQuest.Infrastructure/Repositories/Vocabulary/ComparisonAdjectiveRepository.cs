@@ -7,9 +7,9 @@ using EngQuest.Infrastructure.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class ComparisonAdjectiveRepository
+public static class ComparisonAdjectiveRepository
 {
-    public async Task<List<string>> GetRandomComparisonAdjectivesAsync(Word word, int count, IDbConnection dbConnection)
+    public async static Task<List<string>> GetRandomComparisonAdjectivesAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
 

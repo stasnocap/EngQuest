@@ -1,4 +1,6 @@
-﻿namespace EngQuest.Domain.Quests;
+﻿using EngQuest.Domain.Quests;
+
+namespace EngQuest.Application.Abstractions.Repositories;
 
 public interface IQuestRepository
 {

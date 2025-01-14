@@ -24,16 +24,12 @@ using EngQuest.Infrastructure.Outbox;
 using EngQuest.Infrastructure.Repositories;
 using EngQuest.Infrastructure.Repositories.Vocabulary;
 using EngQuest.Domain.Abstractions;
-using EngQuest.Domain.Levels;
-using EngQuest.Domain.Objectives;
-using EngQuest.Domain.Quests;
-using EngQuest.Domain.Users;
-using EngQuest.Domain.Vocabulary;
-using EngQuest.Domain.Vocabulary.Adjectives;
 using Quartz;
 using AuthenticationOptions = EngQuest.Infrastructure.Authentication.AuthenticationOptions;
 using AuthenticationService = EngQuest.Infrastructure.Authentication.AuthenticationService;
 using IAuthenticationService = EngQuest.Application.Abstractions.Authentication.IAuthenticationService;
+using EngQuest.Application.Abstractions.Repositories;
+using EngQuest.Application.Abstractions.Repositories.Objectives;
 
 namespace EngQuest.Infrastructure;
 
@@ -79,13 +75,6 @@ public static class DependencyInjection
 
         services.AddScoped<IVocabularyRepository, VocabularyRepository>();
         services.AddScoped<IAdjectiveRepository, AdjectiveRepository>();
-        services.AddScoped<ComparisonAdjectiveRepository>();
-        services.AddScoped<NounRepository>();
-        services.AddScoped<VerbRepository>();
-        services.AddScoped<PrimaryVerbRepository>();
-        services.AddScoped<LetterNumberRepository>();
-        services.AddScoped<ModalVerbRepository>();
-        services.AddScoped<NumberWithNounRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 

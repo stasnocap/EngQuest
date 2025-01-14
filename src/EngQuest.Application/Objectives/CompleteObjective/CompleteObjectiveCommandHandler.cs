@@ -1,6 +1,8 @@
 ﻿using EngQuest.Application.Abstractions.Authentication;
 using EngQuest.Application.Abstractions.Caching;
 using EngQuest.Application.Abstractions.Messaging;
+using EngQuest.Application.Abstractions.Repositories;
+using EngQuest.Application.Abstractions.Repositories.Objectives;
 using EngQuest.Application.Levels.GetLevel;
 using EngQuest.Domain.Abstractions;
 using EngQuest.Domain.Levels;

@@ -4,6 +4,7 @@ using EngQuest.Application.Vocabulary.Adjectives.UpdateAdjective;
 using EngQuest.Domain.Abstractions;
 using EngQuest.Domain.Shared;
 using EngQuest.Domain.Vocabulary.Adjectives;
+using EngQuest.Application.Abstractions.Repositories;
 
 namespace EngQuest.Application.UnitTests.Vocabulary.Adjectives;
 

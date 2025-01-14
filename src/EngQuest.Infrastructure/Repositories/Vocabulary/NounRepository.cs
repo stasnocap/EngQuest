@@ -7,9 +7,9 @@ using EngQuest.Infrastructure.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class NounRepository()
+public static class NounRepository
 {
-    public async Task<List<string>> GetRandomNounsAsync(Word word, int count, IDbConnection dbConnection)
+    public async static Task<List<string>> GetRandomNounsAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
 

@@ -1,20 +1,13 @@
 ﻿using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using Dapper;
+using EngQuest.Application.Abstractions.Repositories;
 using EngQuest.Domain.Objectives;
-using EngQuest.Domain.Vocabulary;
 using EngQuest.Infrastructure.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class VocabularyRepository(
-    ComparisonAdjectiveRepository comparisonAdjectiveRepository,
-    LetterNumberRepository _letterNumberRepository,
-    ModalVerbRepository _modalVerbRepository,
-    NounRepository _nounRepository,
-    PrimaryVerbRepository _primaryVerbRepository,
-    VerbRepository _verbRepository,
-    NumberWithNounRepository _numberWithNounRepository) : IVocabularyRepository
+public class VocabularyRepository : IVocabularyRepository
 {
     public async Task<List<string>> GetRandomAsync(Word word, int count, IDbConnection dbConnection, CancellationToken cancellationToken)
     {
@@ -69,19 +62,19 @@ public class VocabularyRepository(
                     return words.ToList();
                 }
             case WordType.ComparisonAdjective:
-                return await comparisonAdjectiveRepository.GetRandomComparisonAdjectivesAsync(word, count, dbConnection);
+                return await ComparisonAdjectiveRepository.GetRandomComparisonAdjectivesAsync(word, count, dbConnection);
             case WordType.LetterNumber:
-                return await _letterNumberRepository.GetRandomLetterNumbersAsync(word, count, dbConnection);
+                return await LetterNumberRepository.GetRandomLetterNumbersAsync(word, count, dbConnection);
             case WordType.ModalVerb:
-                return await _modalVerbRepository.GetRandomModalVerbsAsync(word, count, dbConnection);
+                return await ModalVerbRepository.GetRandomModalVerbsAsync(word, count, dbConnection);
             case WordType.Noun:
-                return await _nounRepository.GetRandomNounsAsync(word, count, dbConnection);
+                return await NounRepository.GetRandomNounsAsync(word, count, dbConnection);
             case WordType.PrimaryVerb:
-                return await _primaryVerbRepository.GetRandomPrimaryVerbsAsync(word, count, dbConnection);
+                return await PrimaryVerbRepository.GetRandomPrimaryVerbsAsync(word, count, dbConnection);
             case WordType.Verb:
-                return await _verbRepository.GetRandomVerbsAsync(word, count, dbConnection);
+                return await VerbRepository.GetRandomVerbsAsync(word, count, dbConnection);
             case WordType.NumberWithNoun:
-                return await _numberWithNounRepository.GetRandomNumberWithNounsAsync(word, count, dbConnection);
+                return await NumberWithNounRepository.GetRandomNumberWithNounsAsync(word, count, dbConnection);
             case WordType.None:
             default:
                 throw new ApplicationException();

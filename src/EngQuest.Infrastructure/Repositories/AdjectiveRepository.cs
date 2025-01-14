@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using EngQuest.Domain.Shared;
 using EngQuest.Domain.Vocabulary.Adjectives;
+using EngQuest.Application.Abstractions.Repositories;
 
 namespace EngQuest.Infrastructure.Repositories;
 

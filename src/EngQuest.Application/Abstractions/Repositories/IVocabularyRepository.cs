@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using EngQuest.Domain.Objectives;
 using EngQuest.Domain.Shared;
 
-namespace EngQuest.Domain.Vocabulary;
+namespace EngQuest.Application.Abstractions.Repositories;
 
 public interface IVocabularyRepository
 {

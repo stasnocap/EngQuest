@@ -1,14 +1,14 @@
 ﻿using System.Data;
-using Dapper;
 using EngQuest.Application.Abstractions.Authentication;
 using EngQuest.Application.Abstractions.Data;
 using EngQuest.Application.Abstractions.Messaging;
+using EngQuest.Application.Abstractions.Repositories;
 using EngQuest.Domain.Abstractions;
 using EngQuest.Domain.Users;
 
 namespace EngQuest.Application.Users.LogInUser;
 
-internal sealed class LogInUserCommandHandler(IJwtService _jwtService, ISqlConnectionFactory _sqlConnectionFactory) : ICommandHandler<LogInUserCommand, LogInResponse>
+internal sealed class LogInUserCommandHandler(IJwtService _jwtService, ISqlConnectionFactory _sqlConnectionFactory, IUserRepository _userRepository) : ICommandHandler<LogInUserCommand, LogInResponse>
 {
     public async Task<Result<LogInResponse>> Handle(
         LogInUserCommand request,
@@ -26,31 +26,7 @@ internal sealed class LogInUserCommandHandler(IJwtService _jwtService, ISqlConne
 
         using IDbConnection dbConnection = _sqlConnectionFactory.CreateConnection();
 
-        const string sql = """
-                           SELECT 
-                                u.id AS UserId, 
-                                u.first_name AS FirstName, 
-                                u.last_name AS LastName, 
-                                u.email AS Email, 
-                                u.identity_id AS IdentityId,
-                                r.name AS Role
-                           FROM users AS u
-                           JOIN role_user AS ru ON ru.users_id  = u.id
-                           JOIN roles AS r ON ru.roles_id = r.id
-                           WHERE u.email = @Email
-                           """;
-        
-        var roles = new List<string>();
-        
-        IEnumerable<LogInResponse> users = await dbConnection.QueryAsync<LogInResponse, string, LogInResponse>(sql, (user, role) =>
-        {
-            roles.Add(role);
-            return user;
-        }, request, splitOn: "Role");
-
-        LogInResponse logIn = users.Single();
-        
-        logIn.Roles.AddRange(roles);
+        LogInResponse logIn = await _userRepository.GetLoginResponseAsync(request, dbConnection);
 
         return logIn;
     }

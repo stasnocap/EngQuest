@@ -4,11 +4,11 @@ using EngQuest.Domain.Objectives;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class NumberWithNounRepository(NounRepository _nounRepository)
+public static class NumberWithNounRepository
 {
-    public async Task<List<string>> GetRandomNumberWithNounsAsync(Word word, int count, IDbConnection dbConnection)
+    public async static Task<List<string>> GetRandomNumberWithNounsAsync(Word word, int count, IDbConnection dbConnection)
     {
-        List<string> nouns = await _nounRepository.GetRandomNounsAsync(word, count, dbConnection);
+        List<string> nouns = await NounRepository.GetRandomNounsAsync(word, count, dbConnection);
         
         string? number = Regex.Match(word.Text.Value, @"\d+").Value;
 

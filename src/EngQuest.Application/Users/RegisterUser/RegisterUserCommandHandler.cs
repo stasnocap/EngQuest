@@ -1,5 +1,6 @@
 ﻿using EngQuest.Application.Abstractions.Authentication;
 using EngQuest.Application.Abstractions.Messaging;
+using EngQuest.Application.Abstractions.Repositories;
 using EngQuest.Application.Users.LogInUser;
 using EngQuest.Domain.Abstractions;
 using EngQuest.Domain.Levels;

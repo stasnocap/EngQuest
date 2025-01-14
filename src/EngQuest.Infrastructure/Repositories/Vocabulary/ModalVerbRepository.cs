@@ -7,9 +7,9 @@ using EngQuest.Infrastructure.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class ModalVerbRepository
+public static class ModalVerbRepository
 {
-    public async Task<List<string>> GetRandomModalVerbsAsync(Word word, int count, IDbConnection dbConnection)
+    public async static Task<List<string>> GetRandomModalVerbsAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
 

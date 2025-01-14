@@ -1,7 +1,8 @@
 using System.Linq.Expressions;
 using EngQuest.Domain.Shared;
+using EngQuest.Domain.Vocabulary.Adjectives;
 
-namespace EngQuest.Domain.Vocabulary.Adjectives;
+namespace EngQuest.Application.Abstractions.Repositories;
 
 public interface IAdjectiveRepository
 {

@@ -8,9 +8,9 @@ using EngQuest.Infrastructure.Extensions;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class LetterNumberRepository()
+public static class LetterNumberRepository
 {
-    public async Task<List<string>> GetRandomLetterNumbersAsync(Word word, int count, IDbConnection dbConnection)
+    public async static Task<List<string>> GetRandomLetterNumbersAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
         

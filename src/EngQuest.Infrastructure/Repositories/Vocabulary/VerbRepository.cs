@@ -10,9 +10,9 @@ using EngQuest.Application.Abstractions.Data;
 
 namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
-public class VerbRepository()
+public static class VerbRepository
 {
-    public async Task<List<string>> GetRandomVerbsAsync(Word word, int count, IDbConnection dbConnection)
+    public async static Task<List<string>> GetRandomVerbsAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
 
