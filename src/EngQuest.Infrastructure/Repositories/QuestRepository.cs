@@ -21,6 +21,7 @@ internal sealed class QuestRepository(ApplicationDbContext dbContext) : Reposito
         return DbContext
             .Set<Quest>()
             .OrderBy(l => l.Id)
+            .Take(15)
             .ToListAsync(cancellationToken);
     }
 }
