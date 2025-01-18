@@ -25,7 +25,7 @@ public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenti
 {
     public void Configure(OpenIdConnectOptions options)
     {
-        bool isDevelopment = _webHostEnvironment.IsDevelopment();
+        bool isStaging = _webHostEnvironment.IsStaging();
 
         options.RequireHttpsMetadata = _authenticationOptions.Value.RequireHttpsMetadata;
         options.Authority = _authenticationOptions.Value.Issuer;
@@ -43,7 +43,7 @@ public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenti
         };
 
         // for (localhost   docker) authorization code flow to work
-        if (isDevelopment)
+        if (isStaging)
         {
             options.TokenValidationParameters.ValidIssuer = "http://localhost:18080/realms/engquest";
         }
@@ -86,7 +86,7 @@ public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenti
             else
             {
                 // for (localhost   docker) authorization code flow to work
-                if (isDevelopment)
+                if (isStaging)
                 {
                     ctx.ProtocolMessage.IssuerAddress = "http://localhost:18080/realms/engquest/protocol/openid-connect/auth";
                 }
@@ -98,7 +98,7 @@ public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenti
         options.Events.OnRedirectToIdentityProviderForSignOut = (ctx) =>
         {
             // for (localhost   docker) authorization code flow to work
-            if (isDevelopment)
+            if (isStaging)
             {
                 ctx.ProtocolMessage.IssuerAddress = "http://localhost:18080/realms/engquest/protocol/openid-connect/logout";
             }

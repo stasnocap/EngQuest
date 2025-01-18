@@ -20,6 +20,8 @@ interface UserContextType {
   fetchUser: () => Promise<void>;
   level: Level;
   updateLevel: (level: Level) => void;
+  login: () => void;
+  logout: () => void;
 }
 
 // Create the UserContext
@@ -46,6 +48,15 @@ function resetLevel() {
   localStorage.removeItem("level");
 }
 
+function logout() {
+  resetLevel();
+  window.location.href = "/api/v1/users/logout";
+}
+
+function login() {
+  window.location.href = "/api/v1/users/login";
+}
+
 // Create a provider component
 export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
   const [user, setUser] = useState<User | null>(null);
@@ -66,13 +77,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
     setUser(data);
     setLevel(level);
   };
-
-  const logout = async () => {
-    await fetch('api/v1/users/logout');
-    setUser(null);
-    resetLevel();
-    setLevel(getOrCreateUnauthorizedLevel());
-  }
   
   const updateLevel = (level: Level) => {
     if (!user) {
@@ -88,7 +92,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{user, fetchUser, level, updateLevel}}>
+    <UserContext.Provider value={{user, fetchUser, level, updateLevel, login, logout }}>
       {children}
     </UserContext.Provider>
   );

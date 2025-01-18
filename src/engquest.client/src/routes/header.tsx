@@ -8,7 +8,7 @@ import { useUser } from "../providers/user-provider.tsx";
 import { useTheme } from "../providers/theme-provider.tsx";
 
 export default function Header() {
-  const { user, level } = useUser();
+  const { user, level, login, logout } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { switchTheme } = useTheme();
 
@@ -121,7 +121,7 @@ export default function Header() {
                   <p className="font-semibold">Вы вошли как</p>
                   <p className="font-semibold text-primary">{user.email}</p>
                 </DropdownItem>
-                <DropdownItem key="logout" color="danger" onClick={() => window.location.href = "/api/v1/users/logout" }>
+                <DropdownItem key="logout" color="danger" onClick={() => logout()}>
                   Выйти
                 </DropdownItem>
               </DropdownMenu>
@@ -131,7 +131,7 @@ export default function Header() {
           (<div className="gap-1 hidden md:flex">
 
             <NavbarItem>
-              <Button as={Link} color="primary" variant="light" onClick={() => window.location.href = "/api/v1/users/login" }>
+              <Button as={Link} color="primary" variant="light" onClick={() => login() }>
                 Войти
               </Button>
             </NavbarItem>
@@ -155,7 +155,7 @@ export default function Header() {
             <Link
               color="danger"
               className="w-full"
-              onClick={() => window.location.href = "/api/v1/users/logout" }              
+              onClick={() => logout()}
               size="lg"
             >
               Выйти
@@ -166,7 +166,7 @@ export default function Header() {
             <NavbarMenuItem key="login">
               <Link
                 className="w-full text-primary"
-                onClick={() => window.location.href = "/api/v1/users/login" }
+                onClick={() => login() }
               >
                 Войти
               </Link>
