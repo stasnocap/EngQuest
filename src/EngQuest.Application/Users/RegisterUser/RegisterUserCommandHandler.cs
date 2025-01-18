@@ -18,6 +18,11 @@ internal sealed class RegisterUserCommandHandler(
         RegisterUserCommand request,
         CancellationToken cancellationToken)
     {
+        if (!string.IsNullOrWhiteSpace(request.IdentityId) && await _userRepository.ExistsByIdentityIdAsync(request.IdentityId, cancellationToken))
+        {
+            return Result.Success<LogInResponse>(null!);
+        }
+
         Result<Level> createLevelResult = Level.Create(request.Level, request.Experience);
 
         if (createLevelResult.IsFailure)
@@ -30,12 +35,29 @@ internal sealed class RegisterUserCommandHandler(
             new LastName(request.LastName),
             new Email(request.Email));
 
-        string identityId = await _authenticationService.RegisterAsync(
-            user,
-            request.Password,
-            cancellationToken);
+        if (string.IsNullOrWhiteSpace(request.IdentityId))
+        {
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                return Result.Failure<LogInResponse>(new Error("User.EmptyPassword", "Пароль не может быть пустым."));
+            }
 
-        user.SetIdentityId(identityId);
+            if (request.Password.Length < 5)
+            {
+                return Result.Failure<LogInResponse>(new Error("User.PasswordMinimumLength", "Пароль не может быть меньше 5 символов."));
+            }
+
+            string identityId = await _authenticationService.RegisterAsync(
+                user,
+                request.Password,
+                cancellationToken);
+
+            user.SetIdentityId(identityId);
+        }
+        else
+        {
+            user.SetIdentityId(request.IdentityId);
+        }
 
         _userRepository.Add(user);
 
@@ -44,7 +66,7 @@ internal sealed class RegisterUserCommandHandler(
         level.SetUserId(user.Id);
 
         _levelRepository.Add(level);
-        
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new LogInResponse()

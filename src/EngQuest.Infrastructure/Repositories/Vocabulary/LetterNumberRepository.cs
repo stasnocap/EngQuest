@@ -10,7 +10,7 @@ namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
 public static class LetterNumberRepository
 {
-    public async static Task<List<string>> GetRandomLetterNumbersAsync(Word word, int count, IDbConnection dbConnection)
+    public static async Task<List<string>> GetRandomLetterNumbersAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
         

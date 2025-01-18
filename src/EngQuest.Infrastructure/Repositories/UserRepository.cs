@@ -4,6 +4,7 @@ using EngQuest.Application.Abstractions.Repositories;
 using EngQuest.Application.Levels.GetLevel;
 using EngQuest.Application.Users.LogInUser;
 using EngQuest.Domain.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace EngQuest.Infrastructure.Repositories;
 
@@ -49,5 +50,10 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : Repositor
         }
 
         DbContext.Add(user);
+    }
+
+    public Task<bool> ExistsByIdentityIdAsync(string identityId, CancellationToken cancellationToken)
+    {
+        return DbContext.Set<User>().AnyAsync(x => x.IdentityId == identityId, cancellationToken);
     }
 }

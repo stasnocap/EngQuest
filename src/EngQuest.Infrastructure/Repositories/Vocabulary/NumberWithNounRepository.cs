@@ -6,7 +6,7 @@ namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
 public static class NumberWithNounRepository
 {
-    public async static Task<List<string>> GetRandomNumberWithNounsAsync(Word word, int count, IDbConnection dbConnection)
+    public static async Task<List<string>> GetRandomNumberWithNounsAsync(Word word, int count, IDbConnection dbConnection)
     {
         List<string> nouns = await NounRepository.GetRandomNounsAsync(word, count, dbConnection);
         

@@ -9,7 +9,7 @@ namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
 public static class NounRepository
 {
-    public async static Task<List<string>> GetRandomNounsAsync(Word word, int count, IDbConnection dbConnection)
+    public static async Task<List<string>> GetRandomNounsAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
 

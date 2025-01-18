@@ -1,17 +1,16 @@
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, Avatar, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge} from "@nextui-org/react";
-import {NavLink as RouterLink, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, Avatar, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge } from "@nextui-org/react";
+import { NavLink as RouterLink } from "react-router-dom";
+import { useState } from "react";
 import EngQuestLogo from "../icons/engquest-logo.tsx";
 import Palette from "../components/palette.tsx";
 import BrushIcon from "../icons/brush-icon.tsx";
-import {useUser} from "../providers/user-provider.tsx";
-import {useTheme} from "../providers/theme-provider.tsx";
+import { useUser } from "../providers/user-provider.tsx";
+import { useTheme } from "../providers/theme-provider.tsx";
 
 export default function Header() {
-  const {user, level, logout} = useUser();
+  const { user, level } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const {switchTheme} = useTheme();
+  const { switchTheme } = useTheme();
 
   return (
     <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen} disableAnimation className="sticky">
@@ -23,7 +22,7 @@ export default function Header() {
         />
         <RouterLink to="/">
           <NavbarBrand>
-            <EngQuestLogo height={32} width={32}/>
+            <EngQuestLogo height={32} width={32} />
             <p className="text-inherit ms-2 font-bold"><span className="text-primary">ENG</span><span className="text-primary-100">QUEST</span></p>
           </NavbarBrand>
         </RouterLink>
@@ -49,7 +48,7 @@ export default function Header() {
                 variant="light"
                 isIconOnly
               >
-                <BrushIcon height={32} width={32}/>
+                <BrushIcon height={32} width={32} />
               </Button>
             </DropdownTrigger>
           </NavbarItem>
@@ -62,42 +61,42 @@ export default function Header() {
               onClick={() => switchTheme("purple")}
               textValue="purple"
             >
-              <Palette theme="Фиолет" colors={["#F4EEFF", "#DCD6F7", "#A6B1E1", "#424874"]} isLightTheme={true}/>
+              <Palette theme="Фиолет" colors={["#F4EEFF", "#DCD6F7", "#A6B1E1", "#424874"]} isLightTheme={true} />
             </DropdownItem>
             <DropdownItem
               key="cream"
               onClick={() => switchTheme("cream")}
               textValue="cream"
             >
-              <Palette theme="Крем" colors={["#FFF5E4", "#FFE3E1", "#FFD1D1", "#FF9494"]} isLightTheme={true}/>
+              <Palette theme="Крем" colors={["#FFF5E4", "#FFE3E1", "#FFD1D1", "#FF9494"]} isLightTheme={true} />
             </DropdownItem>
             <DropdownItem
               key="skin"
               onClick={() => switchTheme("skin")}
               textValue="skin"
             >
-              <Palette theme="Кожа" colors={["#FFC7C7", "#FFE2E2", "#F6F6F6", "#8785A2"]} isLightTheme={true}/>
+              <Palette theme="Кожа" colors={["#FFC7C7", "#FFE2E2", "#F6F6F6", "#8785A2"]} isLightTheme={true} />
             </DropdownItem>
             <DropdownItem
               key="teal"
               onClick={() => switchTheme("teal")}
               textValue="teal"
             >
-              <Palette theme="Бирюза" colors={["#222831", "#393E46", "#00ADB5", "#EEEEEE"]} isLightTheme={false}/>
+              <Palette theme="Бирюза" colors={["#222831", "#393E46", "#00ADB5", "#EEEEEE"]} isLightTheme={false} />
             </DropdownItem>
             <DropdownItem
               key="navy"
               onClick={() => switchTheme("navy")}
               textValue="navy"
             >
-              <Palette theme="Флот" colors={["#1B262C", "#0F4C75", "#3282B8", "#BBE1FA"]} isLightTheme={false}/>
+              <Palette theme="Флот" colors={["#1B262C", "#0F4C75", "#3282B8", "#BBE1FA"]} isLightTheme={false} />
             </DropdownItem>
             <DropdownItem
               key="night"
               onClick={() => switchTheme("night")}
               textValue="night"
             >
-              <Palette theme="Ночь" colors={["#27374D", "#526D82", "#9DB2BF", "#DDE6ED"]} isLightTheme={false}/>
+              <Palette theme="Ночь" colors={["#27374D", "#526D82", "#9DB2BF", "#DDE6ED"]} isLightTheme={false} />
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -122,7 +121,7 @@ export default function Header() {
                   <p className="font-semibold">Вы вошли как</p>
                   <p className="font-semibold text-primary">{user.email}</p>
                 </DropdownItem>
-                <DropdownItem key="logout" color="danger" onClick={logout}>
+                <DropdownItem key="logout" color="danger" onClick={() => window.location.href = "/api/v1/users/logout" }>
                   Выйти
                 </DropdownItem>
               </DropdownMenu>
@@ -130,14 +129,10 @@ export default function Header() {
           </>)
           :
           (<div className="gap-1 hidden md:flex">
+
             <NavbarItem>
-              <Button as={Link} color="primary" variant="light" onClick={() => navigate("/login")}>
+              <Button as={Link} color="primary" variant="light" onClick={() => window.location.href = "/api/v1/users/login" }>
                 Войти
-              </Button>
-            </NavbarItem>
-            <NavbarItem>
-              <Button as={Link} color="primary" variant="flat" onClick={() => navigate("/signup")}>
-                Регистрация
               </Button>
             </NavbarItem>
           </div>)}
@@ -160,7 +155,7 @@ export default function Header() {
             <Link
               color="danger"
               className="w-full"
-              onClick={logout}
+              onClick={() => window.location.href = "/api/v1/users/logout" }              
               size="lg"
             >
               Выйти
@@ -169,21 +164,12 @@ export default function Header() {
         ) : (
           <>
             <NavbarMenuItem key="login">
-              <RouterLink
+              <Link
                 className="w-full text-primary"
-                to="/login"
+                onClick={() => window.location.href = "/api/v1/users/login" }
               >
                 Войти
-              </RouterLink>
-            </NavbarMenuItem>
-            <NavbarMenuItem key="register">
-              <RouterLink
-                color="primary"
-                className="w-full text-primary"
-                to="/signup"
-              >
-                Регистрация
-              </RouterLink>
+              </Link>
             </NavbarMenuItem>
           </>
         )}

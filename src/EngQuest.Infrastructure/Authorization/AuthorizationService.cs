@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using EngQuest.Application.Abstractions.Caching;
 using EngQuest.Domain.Users;
+using System.Collections;
 
 namespace EngQuest.Infrastructure.Authorization;
 
-internal sealed class AuthorizationService(ApplicationDbContext dbContext, ICacheService cacheService)
+public sealed class AuthorizationService(ApplicationDbContext dbContext, ICacheService cacheService)
 {
     public async Task<UserRolesResponse> GetRolesForUserAsync(string identityId)
     {
@@ -21,7 +22,10 @@ internal sealed class AuthorizationService(ApplicationDbContext dbContext, ICach
             .Select(u => new UserRolesResponse
             {
                 UserId = u.Id,
-                Roles = u.Roles.ToList()
+                Roles = u.Roles.Select(x => new Role(x.Id, x.Name)
+                {
+                    Users = Array.Empty<User>(),
+                }).ToList()
             })
             .FirstAsync();
 

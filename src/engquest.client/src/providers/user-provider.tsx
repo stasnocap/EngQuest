@@ -18,7 +18,6 @@ export interface Level {
 interface UserContextType {
   user: User | null;
   fetchUser: () => Promise<void>;
-  logout: () => Promise<void>;
   level: Level;
   updateLevel: (level: Level) => void;
 }
@@ -89,7 +88,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{user, fetchUser, logout, level, updateLevel}}>
+    <UserContext.Provider value={{user, fetchUser, level, updateLevel}}>
       {children}
     </UserContext.Provider>
   );

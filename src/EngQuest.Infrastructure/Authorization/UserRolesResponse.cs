@@ -2,7 +2,7 @@
 
 namespace EngQuest.Infrastructure.Authorization;
 
-internal sealed class UserRolesResponse
+public sealed class UserRolesResponse
 {
     public int UserId { get; init; }
 

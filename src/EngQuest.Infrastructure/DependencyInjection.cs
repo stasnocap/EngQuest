@@ -30,6 +30,8 @@ using AuthenticationService = EngQuest.Infrastructure.Authentication.Authenticat
 using IAuthenticationService = EngQuest.Application.Abstractions.Authentication.IAuthenticationService;
 using EngQuest.Application.Abstractions.Repositories;
 using EngQuest.Application.Abstractions.Repositories.Objectives;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
 
 namespace EngQuest.Infrastructure;
 
@@ -102,11 +104,15 @@ public static class DependencyInjection
 
     private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
     {
-        services
-            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie();
+        services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddOpenIdConnect();
 
-        services.ConfigureOptions<CookieAuthenticationOptionsSetup>();
+        services.ConfigureOptions<OpenIdConnectOptionsSetup>();
 
         services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));
 
@@ -137,6 +143,8 @@ public static class DependencyInjection
     private static void AddAuthorization(IServiceCollection services)
     {
         services.AddScoped<AuthorizationService>();
+
+        services.AddScoped<CustomClaimsTransformation>();
 
         services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
 

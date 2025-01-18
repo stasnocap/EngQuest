@@ -5,8 +5,6 @@ import {createBrowserRouter, RouterProvider, useNavigate,} from "react-router-do
 import Home from "./routes/home.tsx";
 import Quests from "./routes/quests/quests.tsx";
 import Objective from "./routes/quests/objective.tsx";
-import LogIn, {action as logInAction} from "./routes/login.tsx";
-import SignUp, {action as signUpAction} from "./routes/signup.tsx";
 import Infos from "./routes/quests/infos.tsx";
 import {NextUIProvider} from "@nextui-org/react";
 import {ThemeProvider} from "./providers/theme-provider.tsx";
@@ -21,16 +19,6 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Home/>,
-      },
-      {
-        path: "login",
-        element: <LogIn/>,
-        action: logInAction
-      },
-      {
-        path: "signup",
-        element: <SignUp/>,
-        action: signUpAction
       },
       {
         path: "quests",

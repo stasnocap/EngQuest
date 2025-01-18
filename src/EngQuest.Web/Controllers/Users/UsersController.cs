@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿#pragma warning disable S125 // Sections of code should not be commented out
+using System.Security.Claims;
 using Asp.Versioning;
 using EngQuest.Application.Levels.GetLevel;
 using MediatR;
@@ -11,6 +12,10 @@ using EngQuest.Application.Users.RegisterUser;
 using EngQuest.Domain.Abstractions;
 using EngQuest.Infrastructure.Authentication;
 using EngQuest.Infrastructure.Authorization;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using System.IdentityModel.Tokens.Jwt;
+using System.Globalization;
+using EngQuest.Domain.Users;
 
 namespace EngQuest.Web.Controllers.Users;
 
@@ -52,60 +57,18 @@ public class UsersController(ISender _sender) : ControllerBase
         return Ok(userResponse);
     }
 
-    [AllowAnonymous]
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(
-        RegisterUserRequest request,
-        CancellationToken cancellationToken)
+    [Authorize]
+    [HttpGet("login")]
+    public IActionResult LogIn(Uri? redirectUri)
     {
-        var command = new RegisterUserCommand(
-            request.Email,
-            request.FirstName,
-            request.LastName,
-            request.Password,
-            request.Level,
-            request.Experience);
-
-        Result<LogInResponse> result = await _sender.Send(command, cancellationToken);
-
-        if (result.IsFailure)
-        {
-            return BadRequest(result.Error);
-        }
-        
-        ClaimsPrincipal principal = ClaimsPrincipalFactory.Create(result.Value);
-
-        await HttpContext.SignInAsync(principal);
- 
-        return Ok(result.Value);
+        return Redirect(redirectUri?.ToString() ?? "/");
     }
-    
-    [AllowAnonymous]
-    [HttpPost("login")]
-    public async Task<IActionResult> LogIn(
-        LogInUserRequest request,
-        CancellationToken cancellationToken)
-    {
-        var command = new LogInUserCommand(request.Email, request.Password);
 
-        Result<LogInResponse> result = await _sender.Send(command, cancellationToken);
-
-        if (result.IsFailure)
-        {
-            return Unauthorized(result.Error);
-        }
-
-        ClaimsPrincipal principal = ClaimsPrincipalFactory.Create(result.Value);
-
-        await HttpContext.SignInAsync(principal);
-
-        return Ok();
-    }
-    
     [Authorize]
     [HttpGet("logout")]
-    public async Task LogOut()
+    public async Task LogOut(Uri? redirectUri)
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = redirectUri?.ToString() });
     }
 }

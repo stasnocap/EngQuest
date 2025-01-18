@@ -7,6 +7,7 @@ public sealed record RegisterUserCommand(
     string Email,
     string FirstName,
     string LastName,
-    string Password,
     int Level,
-    int Experience) : ICommand<LogInResponse>;
+    int Experience,
+    string? Password = null,
+    string? IdentityId = null) : ICommand<LogInResponse>;

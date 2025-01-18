@@ -13,7 +13,7 @@ namespace EngQuest.Infrastructure.Repositories.Vocabulary;
 
 public static class PrimaryVerbRepository
 {
-    public async static Task<List<string>> GetRandomPrimaryVerbsAsync(Word word, int count, IDbConnection dbConnection)
+    public static async Task<List<string>> GetRandomPrimaryVerbsAsync(Word word, int count, IDbConnection dbConnection)
     {
         string wordText = word.Text.GetWord();
 
