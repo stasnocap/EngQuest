@@ -23,7 +23,14 @@ public static class PrimaryVerbRepository
                               LEFT JOIN "full_negative_forms" fnf on fnf.primary_verb_id = pv.id
                               LEFT JOIN "short_negative_forms" snf on snf.primary_verb_id = pv.id
                               LEFT JOIN "additional_forms" af on af.primary_verb_id = pv.id
-                              WHERE pv.text = @Text OR past_form = @Text OR past_participle_form = @Text OR present_participle_form = @Text OR third_person_form = @Text),
+                              WHERE pv.text = @Text 
+                                OR past_form = @Text 
+                                OR past_participle_form = @Text 
+                                OR present_participle_form = @Text 
+                                OR third_person_form = @Text
+                                OR fnf.text = @Text
+                                OR snf.text = @Text
+                                OR af.text = @Text),
               random AS (SELECT pv.id, pv.text, past_form, past_participle_form, present_participle_form, third_person_form, fnf.text AS full_negative_form, snf.text AS short_negative_form, af.text AS additional_form
                          FROM primary_verbs pv
                          LEFT JOIN "full_negative_forms" fnf on fnf.primary_verb_id = pv.id
