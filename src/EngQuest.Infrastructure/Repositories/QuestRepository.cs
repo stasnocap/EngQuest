@@ -2,26 +2,24 @@
 using Microsoft.EntityFrameworkCore;
 using EngQuest.Domain.Quests;
 using EngQuest.Application.Abstractions.Repositories;
+using System.Data;
+using EngQuest.Application.Quests.GetQuests;
+using Dapper;
 
 namespace EngQuest.Infrastructure.Repositories;
 
-[SuppressMessage("Info Code Smell", "S1135:Track uses of \"TODO\" tags")]
 internal sealed class QuestRepository(ApplicationDbContext dbContext) : Repository<Quest>(dbContext), IQuestRepository
 {
-    public Task<bool> ExistsAsync(int questId, CancellationToken cancellationToken)
+    public async Task<List<QuestResponse>> GetAllAsync(IDbConnection dbConnection)
     {
-        return DbContext
-            .Set<Quest>()
-            .AnyAsync(l => l.Id == questId, cancellationToken);
-    }
+        const string sql = """
+                            SELECT id, name
+                            FROM quests
+                            ORDER BY id asc;
+                           """;
 
-    // TODO: fix this
-    public Task<List<Quest>> GetRangeAsync(int? userId, CancellationToken cancellationToken)
-    {
-        return DbContext
-            .Set<Quest>()
-            .OrderBy(l => l.Id)
-            .Take(15)
-            .ToListAsync(cancellationToken);
+        IEnumerable<QuestResponse> query = await dbConnection.QueryAsync<QuestResponse>(sql);
+
+        return [..query];
     }
 }
