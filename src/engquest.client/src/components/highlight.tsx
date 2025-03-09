@@ -1,6 +1,6 @@
 // src/components/MyCustomSnippet.tsx
 import React, { ReactNode } from 'react';
-import {Snippet} from "@nextui-org/snippet";
+import {Snippet} from "@heroui/snippet";
 
 interface InfoSnippetProps {
   children: ReactNode;

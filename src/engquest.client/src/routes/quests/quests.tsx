@@ -1,4 +1,4 @@
-import {Card, CardHeader, CardBody, Divider, CardFooter, Button, Progress, Tooltip} from "@nextui-org/react";
+import {Card, CardHeader, CardBody, Divider, CardFooter, Button, Progress, Tooltip} from "@heroui/react";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useUser} from "../../providers/user-provider.tsx";

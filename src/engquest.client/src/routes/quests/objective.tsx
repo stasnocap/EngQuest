@@ -1,4 +1,4 @@
-import {BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Divider} from "@nextui-org/react";
+import {BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Divider} from "@heroui/react";
 import React, {useEffect, useState} from "react";
 import {BackspaceIcon} from "../../icons/backspace-icon.tsx";
 import {getRandomObjective, completeObjective, CompleteObjectiveResponse, GainExperienceResult, Quest} from "./quests.ts";

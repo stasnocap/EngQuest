@@ -30,7 +30,7 @@ import Info28 from './info/info28.mdx';
 import Info29 from './info/info29.mdx';
 import Info30 from './info/info30.mdx';
 import Info31 from './info/info31.mdx';
-import {BreadcrumbItem, Breadcrumbs, Button} from "@nextui-org/react";
+import {BreadcrumbItem, Breadcrumbs, Button} from "@heroui/react";
 import './info/info.css';
 import {useLocation} from 'react-router-dom';
 import {Quest} from "./quests.ts";

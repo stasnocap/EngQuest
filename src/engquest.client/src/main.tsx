@@ -6,7 +6,7 @@ import Home from "./routes/home.tsx";
 import Quests from "./routes/quests/quests.tsx";
 import Objective from "./routes/quests/objective.tsx";
 import Infos from "./routes/quests/infos.tsx";
-import {NextUIProvider} from "@nextui-org/react";
+import {HeroUIProvider} from "@heroui/react";
 import {ThemeProvider} from "./providers/theme-provider.tsx";
 import {UserProvider} from "./providers/user-provider.tsx";
 import Root from "./routes/root.tsx";
@@ -46,12 +46,12 @@ createRoot(document.getElementById('root')!).render(
 function App() {
   const navigate = useNavigate();
   return (
-    <NextUIProvider className="min-h-screen" navigate={navigate}>
+    <HeroUIProvider className="min-h-screen" navigate={navigate}>
       <ThemeProvider>
         <UserProvider>
           <Root/>
         </UserProvider>
       </ThemeProvider>
-    </NextUIProvider>
+    </HeroUIProvider>
   )
 } 

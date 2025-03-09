@@ -1,4 +1,4 @@
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import {Link} from "react-router-dom";
 import HomeImage from "../icons/home-image.tsx";
 
