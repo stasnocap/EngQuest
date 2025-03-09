@@ -24,9 +24,7 @@ namespace EngQuest.Web.Controllers.Users;
 [Route("api/v{version:apiVersion}/users")]
 public class UsersController(ISender _sender) : ControllerBase
 {
-    [AllowAnonymous]
     [HttpGet("me")]
-    [HasPermission(Permissions.UsersRead)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLoggedInUser()
     {
