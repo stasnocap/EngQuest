@@ -18,9 +18,22 @@ internal sealed class RegisterUserCommandHandler(
         RegisterUserCommand request,
         CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(request.IdentityId) && await _userRepository.ExistsByIdentityIdAsync(request.IdentityId, cancellationToken))
+        if (!string.IsNullOrWhiteSpace(request.IdentityId))
         {
-            return Result.Success<LogInResponse>(null!);
+            User? existingUser = await _userRepository.GetByIdentityIdAsync(request.IdentityId, cancellationToken);
+
+            if (existingUser is not null)
+            {
+                existingUser.Update(
+                    new FirstName(request.FirstName),
+                    new LastName(request.LastName),
+                    new Email(request.Email)
+                );
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return Result.Success<LogInResponse>(null!);
+            }
         }
 
         Result<Level> createLevelResult = Level.Create(request.Level, request.Experience);

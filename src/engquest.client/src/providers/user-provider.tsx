@@ -22,6 +22,7 @@ interface UserContextType {
   updateLevel: (level: Level) => void;
   login: () => void;
   logout: () => void;
+  account: () => void;
 }
 
 // Create the UserContext
@@ -51,6 +52,10 @@ function resetLevel() {
 function logout() {
   resetLevel();
   window.location.href = "/api/v1/users/logout";
+}
+
+function account() {
+  window.open("http://localhost:18080/realms/engquest/account");
 }
 
 function login() {
@@ -92,7 +97,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{user, fetchUser, level, updateLevel, login, logout }}>
+    <UserContext.Provider value={{user, fetchUser, level, updateLevel, login, logout, account }}>
       {children}
     </UserContext.Provider>
   );

@@ -10,6 +10,8 @@ public interface IUserRepository
 
     Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     
+    Task<User?> GetByIdentityIdAsync(string identityId, CancellationToken cancellationToken);
+    
     Task<bool> ExistsByIdentityIdAsync(string identityId, CancellationToken cancellationToken);
 
     void Add(User user);

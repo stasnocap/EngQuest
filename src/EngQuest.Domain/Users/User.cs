@@ -32,10 +32,17 @@ public sealed class User : Entity
         var user = new User(firstName, lastName, email);
 
         user._roles.Add(Role.Registered);
-        
+
         user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
 
         return user;
+    }
+
+    public void Update(FirstName firstName, LastName lastName, Email email)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
     }
 
     public void SetIdentityId(string identityId)

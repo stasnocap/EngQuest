@@ -1,4 +1,4 @@
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, Avatar, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge } from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, Avatar, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, User } from "@heroui/react";
 import { NavLink as RouterLink } from "react-router-dom";
 import { useState } from "react";
 import EngQuestLogo from "../icons/engquest-logo.tsx";
@@ -8,7 +8,7 @@ import { useUser } from "../providers/user-provider.tsx";
 import { useTheme } from "../providers/theme-provider.tsx";
 
 export default function Header() {
-  const { user, level, login, logout } = useUser();
+  const { user, level, login, logout, account } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { switchTheme } = useTheme();
 
@@ -58,42 +58,42 @@ export default function Header() {
           >
             <DropdownItem
               key="purple"
-              onClick={() => switchTheme("purple")}
+              onPress={() => switchTheme("purple")}
               textValue="purple"
             >
               <Palette theme="Фиолет" colors={["#F4EEFF", "#DCD6F7", "#A6B1E1", "#424874"]} isLightTheme={true} />
             </DropdownItem>
             <DropdownItem
               key="cream"
-              onClick={() => switchTheme("cream")}
+              onPress={() => switchTheme("cream")}
               textValue="cream"
             >
               <Palette theme="Крем" colors={["#FFF5E4", "#FFE3E1", "#FFD1D1", "#FF9494"]} isLightTheme={true} />
             </DropdownItem>
             <DropdownItem
               key="skin"
-              onClick={() => switchTheme("skin")}
+              onPress={() => switchTheme("skin")}
               textValue="skin"
             >
               <Palette theme="Кожа" colors={["#FFC7C7", "#FFE2E2", "#F6F6F6", "#8785A2"]} isLightTheme={true} />
             </DropdownItem>
             <DropdownItem
               key="teal"
-              onClick={() => switchTheme("teal")}
+              onPress={() => switchTheme("teal")}
               textValue="teal"
             >
               <Palette theme="Бирюза" colors={["#222831", "#393E46", "#00ADB5", "#EEEEEE"]} isLightTheme={false} />
             </DropdownItem>
             <DropdownItem
               key="navy"
-              onClick={() => switchTheme("navy")}
+              onPress={() => switchTheme("navy")}
               textValue="navy"
             >
               <Palette theme="Флот" colors={["#1B262C", "#0F4C75", "#3282B8", "#BBE1FA"]} isLightTheme={false} />
             </DropdownItem>
             <DropdownItem
               key="night"
-              onClick={() => switchTheme("night")}
+              onPress={() => switchTheme("night")}
               textValue="night"
             >
               <Palette theme="Ночь" colors={["#27374D", "#526D82", "#9DB2BF", "#DDE6ED"]} isLightTheme={false} />
@@ -104,24 +104,29 @@ export default function Header() {
           (<>
             <Dropdown placement="bottom-end" className="bg-background">
               <DropdownTrigger>
-                <div>
-                  <Badge content={`${level.value}`} color="primary" className="text-primary-50" placement="bottom-right">
-                    <Avatar
+                <div className="cursor-pointer">
+                  <Badge content={`${level.value}`} color="primary" className="text-primary-50" placement="bottom-left">
+                    {/* <Avatar
                       className="transition-transform cursor-pointer"
                       color="primary"
                       name="Hero"
                       size="sm"
-                      src="/avatar.svg"
+                    /> */}
+                    <User
+                      avatarProps={{
+                        src: "/avatar.svg",
+                      }}
+                      description={user.email}
+                      name={`${user.firstName} ${user.lastName}`}
                     />
                   </Badge>
                 </div>
               </DropdownTrigger>
               <DropdownMenu aria-label="Profile Actions" variant="flat" className="text-foreground">
-                <DropdownItem key="profile" className="h-14 gap-2" textValue={`Signed in as ${user.email}`}>
-                  <p className="font-semibold">Вы вошли как</p>
-                  <p className="font-semibold text-primary">{user.email}</p>
+                <DropdownItem key="edit-profile" description="Перезайди чтобы применить изменения" onPress={() => account()}>
+                  Профиль
                 </DropdownItem>
-                <DropdownItem key="logout" color="danger" onClick={() => logout()}>
+                <DropdownItem key="logout" color="danger" onPress={() => logout()}>
                   Выйти
                 </DropdownItem>
               </DropdownMenu>
@@ -131,7 +136,7 @@ export default function Header() {
           (<div className="gap-1 hidden md:flex">
 
             <NavbarItem>
-              <Button as={Link} color="primary" variant="light" onClick={() => login() }>
+              <Button as={Link} color="primary" variant="light" onClick={() => login()}>
                 Войти
               </Button>
             </NavbarItem>
@@ -155,7 +160,7 @@ export default function Header() {
             <Link
               color="danger"
               className="w-full"
-              onClick={() => logout()}
+              onPress={() => logout()}
               size="lg"
             >
               Выйти
@@ -166,7 +171,7 @@ export default function Header() {
             <NavbarMenuItem key="login">
               <Link
                 className="w-full text-primary"
-                onClick={() => login() }
+                onPress={() => login()}
               >
                 Войти
               </Link>

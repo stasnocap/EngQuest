@@ -56,4 +56,9 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : Repositor
     {
         return DbContext.Set<User>().AnyAsync(x => x.IdentityId == identityId, cancellationToken);
     }
+
+    public Task<User?> GetByIdentityIdAsync(string identityId, CancellationToken cancellationToken)
+    {
+        return DbContext.Set<User>().FirstOrDefaultAsync(x => x.IdentityId == identityId, cancellationToken);
+    }
 }

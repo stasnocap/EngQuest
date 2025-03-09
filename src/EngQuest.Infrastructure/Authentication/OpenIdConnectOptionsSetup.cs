@@ -29,9 +29,7 @@ public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenti
 
         options.RequireHttpsMetadata = _authenticationOptions.Value.RequireHttpsMetadata;
         options.Authority = _authenticationOptions.Value.Issuer;
-        // options.Authority = "http://localhost:18080/realms/engquest";
         options.ClientId = _keyCloakOptions.Value.AuthClientId;
-        // options.ClientSecret = "RJimxkXfscfvi76sgDqiTpMQ0D63kL8b";
         options.ClientSecret = _keyCloakOptions.Value.AuthClientSecret;
         options.ResponseType = "code";
         options.SaveTokens = true;
