@@ -1,4 +1,4 @@
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, User } from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, User, Avatar } from "@heroui/react";
 import { NavLink as RouterLink } from "react-router-dom";
 import { useState } from "react";
 import EngQuestLogo from "../icons/engquest-logo.tsx";
@@ -113,18 +113,20 @@ export default function Header() {
               <DropdownTrigger>
                 <div className="cursor-pointer">
                   <Badge content={`${level.value}`} color="primary" className="text-primary-50" placement="bottom-left">
-                    {/* <Avatar
-                      className="transition-transform cursor-pointer"
+                    <Avatar
+                      className="transition-transform cursor-pointert block sm:hidden"
                       color="primary"
                       name="Hero"
                       size="sm"
-                    /> */}
+                      src="/avatar.svg"
+                    />
                     <User
                       avatarProps={{
                         src: "/avatar.svg",
                       }}
                       description={user.email}
                       name={`${user.firstName} ${user.lastName}`}
+                      className="hidden sm:flex"
                     />
                   </Badge>
                 </div>
@@ -162,17 +164,41 @@ export default function Header() {
             </RouterLink>
           </Link>
         </NavbarMenuItem>
+        <NavbarMenuItem key="leaderboard">
+          <Link
+            as="div"
+            color="primary"
+            className="w-full"
+            size="lg"
+          >
+            <RouterLink to="/leaderboard">
+              Доска лидеров
+            </RouterLink>
+          </Link>
+        </NavbarMenuItem>
         {user ? (
-          <NavbarMenuItem key="logout">
-            <Link
-              color="danger"
-              className="w-full"
-              onPress={() => logout()}
-              size="lg"
-            >
-              Выйти
-            </Link>
-          </NavbarMenuItem>
+          <>
+            <NavbarMenuItem key="account">
+              <Link
+                color="primary"
+                className="w-full"
+                onPress={() => account()}
+                size="lg"
+              >
+                Профиль
+              </Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem key="logout">
+              <Link
+                color="danger"
+                className="w-full"
+                onPress={() => logout()}
+                size="lg"
+              >
+                Выйти
+              </Link>
+            </NavbarMenuItem>
+          </>
         ) : (
           <>
             <NavbarMenuItem key="login">
