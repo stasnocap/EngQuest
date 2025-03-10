@@ -16,7 +16,7 @@ import {
   Pagination,
 } from "@heroui/react";
 import { AvatarIcon } from "../icons/avatar-icon";
-import { getUsers, User as EngQuestUser, Level } from "../providers/user-provider";
+import { getUsers, User as EngQuestUser } from "../providers/user-provider";
 
 export const columns = [
   { name: "ID", uid: "id", sortable: true },
