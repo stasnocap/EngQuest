@@ -1,9 +1,13 @@
 ﻿using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Bogus;
 using Dapper;
 using EngQuest.Application.Abstractions.Data;
+using EngQuest.Domain.Levels;
 using EngQuest.Domain.Objectives;
 using EngQuest.Domain.Shared;
+using EngQuest.Domain.Users;
 using EngQuest.Domain.Vocabulary.Adverbs;
 using EngQuest.Domain.Vocabulary.ComparisonAdjectives;
 using EngQuest.Domain.Vocabulary.Compounds;
@@ -31,7 +35,8 @@ internal static class SeedDataExtensions
         // InsertObjectives(connection);
         // InsertObjectiveQuestIds(connection);
         // InsertWords(connection);
-        
+        InsertUsers(connection);
+
         InsertAdjectives(connection);
         InsertAdverbs(connection);
         InsertComparisonAdjectives(connection);
@@ -50,6 +55,72 @@ internal static class SeedDataExtensions
         InsertQuestionWords(connection);
         InsertVerbs(connection);
         InsertCities(connection);
+    }
+
+    private static void InsertUsers(IDbConnection connection)
+    {
+        int userId = 0;
+        Faker<User> userFaker = new Faker<User>()
+            .CustomInstantiator(x =>
+            {
+                var gender = (Bogus.DataSets.Name.Gender)Random.Shared.Next(0, 1);
+                string firstName = x.Name.FirstName(gender);
+                string lastName = x.Name.LastName(gender);
+                string email = x.Internet.Email(firstName, lastName, uniqueSuffix: x.UniqueIndex.ToString(CultureInfo.CurrentCulture));
+
+                var user = User.Create(new FirstName(firstName), new LastName(lastName), new Email(email));
+
+                user.SetIdentityId(x.Random.Guid().ToString());
+
+                return user;
+            }).RuleFor(x => x.Id, x => userId++);
+
+        int levelId = 0;
+        int levelUserId = 0;
+        Faker<Level> levelFaker = new Faker<Level>()
+            .CustomInstantiator(x =>
+            {
+                int levelValue = x.Random.Int(2, 31);
+
+                int experience = Level.RequiredXp[levelValue];
+
+                Level level = Level.Create(levelValue, experience).Value!;
+
+                level.SetUserId(levelUserId++);
+
+                return level;
+            })
+            .RuleFor(x => x.Id, x => levelId++);
+
+        const int count = 1000;
+
+        List<User> users = userFaker.Generate(count);
+        List<Level> levels = levelFaker.Generate(count);
+
+        const string usersSql = """
+                                INSERT INTO public.users(id, identity_id, first_name, last_name, email)
+                                VALUES (@Id, @IdentityId, @FirstName, @LastName, @Email);
+                                """;
+
+        connection.Execute(usersSql, users.Select(x => new
+        {
+            x.Id,
+            x.IdentityId,
+            FirstName = x.FirstName.Value,
+            LastName = x.LastName.Value,
+            Email = x.Email.Value,
+        }));
+
+        connection.Execute("SELECT SETVAL('public.user_id_sequence', 1000);");
+
+        const string levelsSql = """
+                                INSERT INTO public.levels(id, user_id, level, level_xp)
+                                VALUES (@Id, @UserId, @Value, @Experience);
+                                """;
+
+        connection.Execute(levelsSql, levels);
+
+        connection.Execute("SELECT SETVAL('public.levels_id_seq', 1000);");
     }
 
     private static void InsertVerbs(IDbConnection connection)
@@ -395,7 +466,7 @@ internal static class SeedDataExtensions
             Verb.CreateIrregularVerb(new Text("write"), new PastForm("wrote"), new PastParticipleForm("written")),
         ];
 
-        return [..generatedVerbs.Select(x => new { Text = x.Text.Value, PastForm = x.PastForm.Value, PastParticipleForm = x.PastParticipleForm.Value, PresentParticipleForm = x.PresentParticipleForm.Value, ThirdPersonForm = x.ThirdPersonForm.Value, IsIrregularVerb = x.IsIrregularVerb.Value })];
+        return [.. generatedVerbs.Select(x => new { Text = x.Text.Value, PastForm = x.PastForm.Value, PastParticipleForm = x.PastParticipleForm.Value, PresentParticipleForm = x.PresentParticipleForm.Value, ThirdPersonForm = x.ThirdPersonForm.Value, IsIrregularVerb = x.IsIrregularVerb.Value })];
     }
 
     private static void InsertQuestionWords(IDbConnection connection)

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
 using System.Globalization;
 using EngQuest.Domain.Users;
+using EngQuest.Application.Users.GetUsers;
 
 namespace EngQuest.Web.Controllers.Users;
 
@@ -24,6 +25,17 @@ namespace EngQuest.Web.Controllers.Users;
 [Route("api/v{version:apiVersion}/users")]
 public class UsersController(ISender _sender) : ControllerBase
 {
+    [HttpGet]
+    [ProducesResponseType(typeof(UserResponse[]), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUsers()
+    {
+        var query = new GetUsersQuery();
+
+        IReadOnlyList<UserResponse> result = await _sender.Send(query, HttpContext.RequestAborted);
+
+        return Ok(result); 
+    }
+
     [HttpGet("me")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLoggedInUser()
@@ -46,6 +58,7 @@ public class UsersController(ISender _sender) : ControllerBase
 
         var userResponse = new UserResponse
         {
+            Id = User.GetUserId()!.Value,
             FirstName = User.GetFirstName()!,
             LastName = User.GetLastName()!,
             Email = User.GetEmail()!,

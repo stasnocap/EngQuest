@@ -1,10 +1,12 @@
-import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 // Define the shape of our user data
-interface User {
+export interface User {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
+  level: Level
 }
 
 export interface Level {
@@ -33,15 +35,15 @@ export const experiencePerFirstQuest = 12;
 
 function getOrCreateUnauthorizedLevel(): Level {
   const levelString = localStorage.getItem("level");
-  
+
   if (levelString) {
     return JSON.parse(levelString);
   }
-  
-  const level = {value: 1, experience: 0, levelRequiredXp: 0, nextLevelRequiredXp: experienceToAchiveFirstLevel};
-  
+
+  const level = { value: 1, experience: 0, levelRequiredXp: 0, nextLevelRequiredXp: experienceToAchiveFirstLevel };
+
   localStorage.setItem("level", JSON.stringify(level));
-  
+
   return level;
 }
 
@@ -58,12 +60,26 @@ function account() {
   window.open("http://localhost:18080/realms/engquest/account");
 }
 
+export async function getUsers(): Promise<User[]> {
+  const response = await fetch('api/v1/users');
+
+  if (response.status !== 200) {
+    return [];
+  }
+
+  const json = await response.json();
+
+  const users = json as User[];
+
+  return users;
+}
+
 function login() {
   window.location.href = "/api/v1/users/login";
 }
 
 // Create a provider component
-export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
+export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [level, setLevel] = useState<Level>(getOrCreateUnauthorizedLevel());
 
@@ -82,12 +98,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
     setUser(data);
     setLevel(level);
   };
-  
+
   const updateLevel = (level: Level) => {
     if (!user) {
       localStorage.setItem("level", JSON.stringify(level));
     }
-    
+
     setLevel(level);
   }
 
@@ -97,7 +113,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({children}) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{user, fetchUser, level, updateLevel, login, logout, account }}>
+    <UserContext.Provider value={{ user, fetchUser, level, updateLevel, login, logout, account }}>
       {children}
     </UserContext.Provider>
   );

@@ -12,7 +12,7 @@ public class GetQuestsQueryHandler(ISqlConnectionFactory _sqlConnectionFactory, 
 {
     public async Task<Result<IReadOnlyList<QuestResponse>>> Handle(GetQuestsQuery request, CancellationToken cancellationToken)
     {
-        IDbConnection dbConnection = _sqlConnectionFactory.CreateConnection();
+        using IDbConnection dbConnection = _sqlConnectionFactory.CreateConnection();
 
         List<QuestResponse> quests = await _questRepository.GetAllAsync(dbConnection);
 

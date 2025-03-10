@@ -1,44 +1,53 @@
-import {StrictMode} from 'react'
-import {createRoot} from 'react-dom/client'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import './index.css'
-import {createBrowserRouter, RouterProvider, useNavigate,} from "react-router-dom";
+import { createBrowserRouter, RouterProvider, useNavigate, } from "react-router-dom";
 import Home from "./routes/home.tsx";
 import Quests from "./routes/quests/quests.tsx";
 import Objective from "./routes/quests/objective.tsx";
 import Infos from "./routes/quests/infos.tsx";
-import {HeroUIProvider} from "@heroui/react";
-import {ThemeProvider} from "./providers/theme-provider.tsx";
-import {UserProvider} from "./providers/user-provider.tsx";
+import { HeroUIProvider } from "@heroui/react";
+import { ThemeProvider } from "./providers/theme-provider.tsx";
+import { UserProvider } from "./providers/user-provider.tsx";
 import Root from "./routes/root.tsx";
+import Leaderboard from './routes/leaderboard.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
+    element: <App />,
     children: [
       {
         path: "",
-        element: <Home/>,
+        element: <Home />,
       },
       {
         path: "quests",
-        element: <Quests/>
+        element: <Quests />
       },
       {
         path: "quests/:questId",
-        element: <Objective/>,
+        element: <Objective />,
       },
       {
         path: "quests/:questId/info",
-        element: < Infos/>,
+        element: < Infos />,
+      },
+      {
+        path: "leaderboard",
+        element: < Leaderboard />,
       },
     ]
   },
-]);
+], {
+  future: {
+    v7_relativeSplatPath: true,
+  }
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </StrictMode>
 );
 
@@ -49,7 +58,7 @@ function App() {
     <HeroUIProvider className="min-h-screen" navigate={navigate}>
       <ThemeProvider>
         <UserProvider>
-          <Root/>
+          <Root />
         </UserProvider>
       </ThemeProvider>
     </HeroUIProvider>

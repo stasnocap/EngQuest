@@ -52,10 +52,10 @@ export default function Quests() {
             </CardBody>
             <Divider/>
             <CardFooter className="flex justify-between">
-              <Button className="bg-primary-100" isLoading={loading} isDisabled={isQuestDisabled} onClick={() => navigateToInfo(quest)}>
+              <Button className="bg-primary-100" isLoading={loading} isDisabled={isQuestDisabled} onPress={() => navigateToInfo(quest)}>
                 Подробнее
               </Button>
-              <Button color="primary" isLoading={loading} isDisabled={isQuestDisabled} onClick={() => navigateToObjective(quest)}>
+              <Button color="primary" isLoading={loading} isDisabled={isQuestDisabled} onPress={() => navigateToObjective(quest)}>
                 Старт!
               </Button>
             </CardFooter>

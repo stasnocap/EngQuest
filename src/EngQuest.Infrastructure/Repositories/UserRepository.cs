@@ -2,6 +2,7 @@
 using Dapper;
 using EngQuest.Application.Abstractions.Repositories;
 using EngQuest.Application.Levels.GetLevel;
+using EngQuest.Application.Users.GetUsers;
 using EngQuest.Application.Users.LogInUser;
 using EngQuest.Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -60,5 +61,23 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : Repositor
     public Task<User?> GetByIdentityIdAsync(string identityId, CancellationToken cancellationToken)
     {
         return DbContext.Set<User>().FirstOrDefaultAsync(x => x.IdentityId == identityId, cancellationToken);
+    }
+
+    public async Task<List<UserResponse>> GetAllAsync(IDbConnection dbConnection, CancellationToken cancellationToken)
+    {
+        const string sql = """
+                            SELECT u.id, u.first_name, u.last_name, u.email, l.level as Value, l.level_xp as Experience
+                            FROM users u
+                            JOIN levels l on l.user_id = u.id
+                            ORDER BY l.level_xp DESC;
+                           """;
+
+        IEnumerable<UserResponse> query = await dbConnection.QueryAsync<UserResponse, LevelResponse, UserResponse>(sql, (user, level) =>
+        {
+            user.Level = level;
+            return user;
+        }, splitOn: "Value");
+
+        return [.. query];
     }
 }

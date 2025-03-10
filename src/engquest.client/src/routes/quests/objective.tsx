@@ -1,5 +1,5 @@
-import {BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Divider} from "@heroui/react";
-import React, {useEffect, useState} from "react";
+import {BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Divider, PressEvent} from "@heroui/react";
+import {useEffect, useState} from "react";
 import {BackspaceIcon} from "../../icons/backspace-icon.tsx";
 import {getRandomObjective, completeObjective, CompleteObjectiveResponse, GainExperienceResult, Quest} from "./quests.ts";
 import {useLocation, useParams} from "react-router-dom";
@@ -126,7 +126,7 @@ export default function Objective() {
       });
   }, [revalidateCounter]);
 
-  function handleButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleButtonClick(event: PressEvent) {
     setCompleteObjectiveResponse(null);
     setGainExperienceResult(null);
 
@@ -249,7 +249,7 @@ export default function Objective() {
             🔓 Новый квест открыт! Прими вызов и покоряй новые вершины! 🗺️
           </div>
         ) : (<div className={`text-lg md:text-3xl ${completeObjectiveResponse?.completeObjectiveResult.success === false ? "text-danger" : "text-primary-100"}`}>{completeObjectiveResponse?.completeObjectiveResult.success === false ? completeObjectiveResponse.completeObjectiveResult.correctAnswer : engPhrase.join(' ')}</div>)}
-        <Button variant="light" color="primary" className="text-xl" isDisabled={isBackspaceDisabled} onClick={handleBackspaceClick}>
+        <Button variant="light" color="primary" className="text-xl" isDisabled={isBackspaceDisabled} onPress={handleBackspaceClick}>
           <span className="hidden md:inline">BACKSPACE</span>
           <BackspaceIcon width={32} height={32}/>
         </Button>
@@ -265,7 +265,7 @@ export default function Objective() {
           {shownGroups.map((wordGroup, i) => (
             <ButtonGroup className={"grid grid-cols-2"} key={i} radius="none" data-word-group-index={wordGroup.index} data-group-index={i}>
               {wordGroup.words.map((word, j) => (
-                <Button color="primary" variant="light" key={j} className="text-md md:text-2xl p-6" onClick={handleButtonClick} isDisabled={wordGroup.disabled}>
+                <Button color="primary" variant="light" key={j} className="text-md md:text-2xl p-6" onPress={handleButtonClick} isDisabled={wordGroup.disabled}>
                   {wordGroup.disabled ? "" : word}
                 </Button>
               ))}

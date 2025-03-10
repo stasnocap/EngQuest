@@ -1,4 +1,5 @@
 using System.Data;
+using EngQuest.Application.Users.GetUsers;
 using EngQuest.Application.Users.LogInUser;
 using EngQuest.Domain.Users;
 
@@ -15,4 +16,6 @@ public interface IUserRepository
     Task<bool> ExistsByIdentityIdAsync(string identityId, CancellationToken cancellationToken);
 
     void Add(User user);
+
+    Task<List<UserResponse>> GetAllAsync(IDbConnection dbConnection, CancellationToken cancellationToken);
 }

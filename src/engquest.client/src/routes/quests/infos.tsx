@@ -61,7 +61,7 @@ export default function Infos() {
           <Info/>
         </MDXProvider>
       </div>
-      <Button onClick={scrollToTop} size="lg" variant="flat" radius="full" color="primary"> 
+      <Button onPress={scrollToTop} size="lg" variant="flat" radius="full" color="primary"> 
         Вверх 
       </Button>    
     </>

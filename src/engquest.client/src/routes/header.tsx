@@ -1,4 +1,4 @@
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, Avatar, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, User } from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, User } from "@heroui/react";
 import { NavLink as RouterLink } from "react-router-dom";
 import { useState } from "react";
 import EngQuestLogo from "../icons/engquest-logo.tsx";
@@ -32,6 +32,13 @@ export default function Header() {
           <Link as="div" color="primary">
             <RouterLink to="/quests">
               Приключение
+            </RouterLink>
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link as="div" color="primary">
+            <RouterLink to="/leaderboard">
+              Доска лидеров
             </RouterLink>
           </Link>
         </NavbarItem>
@@ -136,7 +143,7 @@ export default function Header() {
           (<div className="gap-1 hidden md:flex">
 
             <NavbarItem>
-              <Button as={Link} color="primary" variant="light" onClick={() => login()}>
+              <Button as={Link} color="primary" variant="light" onPress={() => login()}>
                 Войти
               </Button>
             </NavbarItem>
