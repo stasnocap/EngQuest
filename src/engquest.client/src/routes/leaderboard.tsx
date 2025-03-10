@@ -16,7 +16,7 @@ import {
   Pagination,
 } from "@heroui/react";
 import { AvatarIcon } from "../icons/avatar-icon";
-import { getUsers, User as EngQuestUser } from "../providers/user-provider";
+import { getUsers, User as EngQuestUser, Level } from "../providers/user-provider";
 
 export const columns = [
   { name: "ID", uid: "id", sortable: true },
@@ -145,10 +145,17 @@ export default function Leaderboard() {
       if (sortDescriptor.column === "name") {
         first = `${a.firstName} ${a.lastName}`;
         second = `${b.firstName} ${b.lastName}`;
+      } else if (sortDescriptor.column === "level") {
+        first = a.level.value;
+        second = b.level.value;
+      } else if (sortDescriptor.column === "experience") {
+        first = a.level.experience;
+        second = b.level.experience;
       } else {
         first = a[sortDescriptor.column as keyof typeof a];
         second = b[sortDescriptor.column as keyof typeof b];
       }
+
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
