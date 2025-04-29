@@ -43,24 +43,24 @@ export default defineConfig({
   server: {
     proxy: {
       '^/api/.*': {
-        target: 'http://localhost:5000/',
+        target: 'https://localhost:5001/',
         secure: false,
       },
       '^/signin-oidc': {
-        target: 'http://localhost:5000/',
+        target: 'https://localhost:5001/',
         secure: false,
       },
       '^/signout-callback-oidc': {
-        target: 'http://localhost:5000/',
+        target: 'https://localhost:5001/',
         secure: false,
       },
     },
     port: 5173,
     strictPort: true,
     host: true,
-    // https: {
-    //   key: fs.readFileSync(keyFilePath),
-    //   cert: fs.readFileSync(certFilePath),
-    // }
+    https: {
+       key: fs.readFileSync(keyFilePath),
+       cert: fs.readFileSync(certFilePath),
+    }
   }
 })

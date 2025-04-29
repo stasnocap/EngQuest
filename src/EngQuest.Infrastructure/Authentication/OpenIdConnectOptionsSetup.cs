@@ -21,12 +21,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace EngQuest.Infrastructure.Authentication;
 
-public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenticationOptions, IOptions<KeycloakOptions> _keyCloakOptions, IWebHostEnvironment _webHostEnvironment) : IConfigureNamedOptions<OpenIdConnectOptions>
+public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenticationOptions, IOptions<KeycloakOptions> _keyCloakOptions) : IConfigureNamedOptions<OpenIdConnectOptions>
 {
     public void Configure(OpenIdConnectOptions options)
     {
-        bool isStaging = _webHostEnvironment.IsStaging();
-
         options.RequireHttpsMetadata = _authenticationOptions.Value.RequireHttpsMetadata;
         options.Authority = _authenticationOptions.Value.Issuer;
         options.ClientId = _keyCloakOptions.Value.AuthClientId;
@@ -39,12 +37,6 @@ public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenti
             NameClaimType = "preferred_username",
             RoleClaimType = "roles",
         };
-
-        // for (localhost   docker) authorization code flow to work
-        if (isStaging)
-        {
-            options.TokenValidationParameters.ValidIssuer = "http://localhost:18080/realms/engquest";
-        }
 
         options.Events.OnTicketReceived = async ctx =>
         {
@@ -80,25 +72,6 @@ public class OpenIdConnectOptionsSetup(IOptions<AuthenticationOptions> _authenti
             {
                 ctx.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 ctx.HandleResponse();
-            }
-            else
-            {
-                // for (localhost   docker) authorization code flow to work
-                if (isStaging)
-                {
-                    ctx.ProtocolMessage.IssuerAddress = "http://localhost:18080/realms/engquest/protocol/openid-connect/auth";
-                }
-            }
-
-            return Task.CompletedTask;
-        };
-
-        options.Events.OnRedirectToIdentityProviderForSignOut = (ctx) =>
-        {
-            // for (localhost   docker) authorization code flow to work
-            if (isStaging)
-            {
-                ctx.ProtocolMessage.IssuerAddress = "http://localhost:18080/realms/engquest/protocol/openid-connect/logout";
             }
 
             return Task.CompletedTask;

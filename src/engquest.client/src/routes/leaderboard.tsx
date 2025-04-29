@@ -21,8 +21,8 @@ import { getUsers, User as EngQuestUser } from "../providers/user-provider";
 export const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "ИМЯ", uid: "name", sortable: true },
-  { name: "УРОВЕНЬ", uid: "level", sortable: true },
-  { name: "ОПЫТ", uid: "experience", sortable: true },
+  { name: "LVL", uid: "level", sortable: true },
+  { name: "XP", uid: "experience", sortable: true },
 ];
 
 function getRandomColor() {
@@ -88,7 +88,9 @@ export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }) => {
   );
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "level", "experience"];
+const INITIAL_VISIBLE_COLUMNS = window.innerWidth < 768
+  ? ["name", "level"]
+  : ["name", "level", "experience"];
 
 export default function Leaderboard() {
   const [users, setUsers] = React.useState<EngQuestUser[]>([]);
@@ -97,7 +99,7 @@ export default function Leaderboard() {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [sortDescriptor, setSortDescriptor] = React.useState<any>({
     column: "experience",
-    direction: "ascending",
+    direction: "descending",
   });
   const [page, setPage] = React.useState(1);
 

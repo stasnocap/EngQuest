@@ -4,6 +4,7 @@ import {BackspaceIcon} from "../../icons/backspace-icon.tsx";
 import {getRandomObjective, completeObjective, CompleteObjectiveResponse, GainExperienceResult, Quest} from "./quests.ts";
 import {useLocation, useParams} from "react-router-dom";
 import {experiencePerFirstQuest, experienceToAchiveFirstLevel, useUser} from "../../providers/user-provider.tsx";
+import { maxQuest } from "./quests.tsx";
 
 interface Objective {
   objectiveId: number,
@@ -49,6 +50,9 @@ function mapObjective(objective: any): Objective {
 
   return model;
 }
+
+const questNameMaxLength = 23;
+const mediumWidth = 768;
 
 const compliments = [
   "Молодец!",
@@ -224,15 +228,18 @@ export default function Objective() {
 
   return loading ? (<></>) : (
     <>
-      <Breadcrumbs itemClasses={{item: "text-lg"}} underline="hover" className="mb-3" color="primary">
+      <Breadcrumbs itemClasses={{item: "text-sm md:text-lg"}} underline="hover" className="mb-3" color="primary">
         <BreadcrumbItem href="/quests">Квеcты</BreadcrumbItem>
-        <BreadcrumbItem href={`/quests/${quest.id}/info`}>Квест {quest.id}: {quest.name}</BreadcrumbItem>
+        <BreadcrumbItem href={`/quests/${quest.id}/info`}>Квест {quest.id}: {window.innerWidth < mediumWidth ? quest.name.length > questNameMaxLength ? `${quest.name.substring(0, questNameMaxLength)}...` : quest.name : quest.name}</BreadcrumbItem>
       </Breadcrumbs>
       <div className="flex justify-between text-lg md:text-3xl items-center">
         <div className="flex-1">
           <div className="text-primary">
             {gainExperienceResult?.newLevel
-              ? (<>🎉 Поздравляем! 🎉 Ты достиг нового уровня! Продолжай в том же духе! 🌟✨</>)
+              ? (level.value > maxQuest
+                 ? <>🔥 Финальный рубеж! 🔥 Ты достиг последнего уровня! 🚀</>
+                 : <>🎉 Поздравляем! 🎉 Ты достиг нового уровня! Продолжай в том же духе! 🌟✨</>
+              )
               : (<>{rusPhrase}</>)}
           </div>
         </div>
@@ -246,7 +253,9 @@ export default function Objective() {
       <div className="flex justify-between">
         {gainExperienceResult?.newLevel ? (
           <div className="text-primary text-lg md:text-3xl">
-            🔓 Новый квест открыт! Прими вызов и покоряй новые вершины! 🗺️
+            {level.value > maxQuest
+              ? <>Теперь ты легенда! 🏆 Пусть твои победы вдохновляют, а знания помогают достигать новых вершин!</>
+              : <>🔓 Новый квест открыт! Прими вызов и покоряй новые вершины! 🗺️</>}
           </div>
         ) : (<div className={`text-lg md:text-3xl ${completeObjectiveResponse?.completeObjectiveResult.success === false ? "text-danger" : "text-primary-100"}`}>{completeObjectiveResponse?.completeObjectiveResult.success === false ? completeObjectiveResponse.completeObjectiveResult.correctAnswer : engPhrase.join(' ')}</div>)}
         <Button variant="light" color="primary" className="text-xl" isDisabled={isBackspaceDisabled} onPress={handleBackspaceClick}>

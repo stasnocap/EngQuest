@@ -5,9 +5,10 @@ import {useUser} from "../../providers/user-provider.tsx";
 import {CheckIcon} from "../../icons/check-icon.tsx";
 import {getQuests, Quest} from "./quests.ts";
 
+export const maxQuest = 31;
 const loadingQuests: Quest[] = [];
 
-for (let i = 1; i <= 31; i++) {
+for (let i = 1; i <= maxQuest; i++) {
   loadingQuests.push({id: i, name: ""})
 }
 
@@ -35,7 +36,7 @@ export default function Quests() {
           
           const card = (<Card className="max-w-[400px] bg-primary-50" key={quest.id} isDisabled={isQuestDisabled}>
             <CardHeader className="flex gap-3">
-              <div className="flex w-full justify-between items-center text-lg font-medium">
+              <div className="flex w-full justify-between items-center text-md font-medium">
                 Квест {quest.id}
                 {level.value <= quest.id
                   ? (level.value === quest.id && (user || level.value === 1)

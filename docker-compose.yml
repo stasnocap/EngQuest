@@ -8,12 +8,14 @@
     depends_on:
       - engquest-db
     environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
-      - ASPNETCORE_HTTP_PORTS=10000
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTPS_PORTS=10000
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     ports:
       - 10000:10000
     volumes:
-      - /root/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - ${HOME}/.aspnet/https:/https/
 
   engquest-db:
     image: postgres:latest
@@ -30,14 +32,18 @@
   engquest-idp:
     image: quay.io/keycloak/keycloak:latest
     container_name: EngQuest.Identity
-    command: start-dev
+    command: start-dev --https-port=8443 --https-certificate-file=/etc/x509/https/keycloak.crt --https-certificate-key-file=/etc/x509/https/keycloak.key
     environment:
+      # - KC_HOSTNAME_STRICT=false
+      # - KC_HOSTNAME=auth.engquest.by
+      # - KC_PROXY=edge
       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
     volumes:
       - ./.containers/identity:/opt/keycloak/data
+      - ./certs:/etc/x509/https
     ports:
-      - 18080:8080
+      - 18080:8443
 
   engquest-seq:
     image: datalust/seq:latest

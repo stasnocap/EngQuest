@@ -35,6 +35,9 @@ import './info/info.css';
 import {useLocation} from 'react-router-dom';
 import {Quest} from "./quests.ts";
 
+const questNameMaxLength = 23;
+const mediumWidth = 768;
+
 export default function Infos() {
   const location = useLocation();
   const {quest}: { quest: Quest } = location.state;
@@ -52,9 +55,9 @@ export default function Infos() {
 
   return (
     <>
-      <Breadcrumbs itemClasses={{item: "text-lg"}} underline="hover" className="mb-3" color="primary">
+      <Breadcrumbs itemClasses={{item: "text-sm md:text-lg"}} underline="hover" className="mb-3" color="primary">
         <BreadcrumbItem href="/quests">Квеcты</BreadcrumbItem>
-        <BreadcrumbItem href={`/quests/${quest.id}/info`}>Квест {quest.id}: {quest.name}</BreadcrumbItem>
+        <BreadcrumbItem href={`/quests/${quest.id}/info`}>Квест {quest.id}: {window.innerWidth < mediumWidth ? quest.name.length > questNameMaxLength ? `${quest.name.substring(0, questNameMaxLength)}...` : quest.name : quest.name}</BreadcrumbItem>
       </Breadcrumbs>
       <div className="info text-lg">
         <MDXProvider components={components}>

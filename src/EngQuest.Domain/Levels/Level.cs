@@ -18,7 +18,7 @@ public sealed class Level : Entity
 
             Level level = One();
             
-            int[] quests = Enumerable.Range(1, 31).ToArray();
+            int[] quests = Enumerable.Range(1, 32).ToArray();
 
             foreach (int quest in quests)
             {
@@ -33,6 +33,7 @@ public sealed class Level : Entity
                     break;
                 }
             }
+            
 
             return _requiredXp;
         }

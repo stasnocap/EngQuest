@@ -7,7 +7,7 @@ export default function Home() {
     <div className="grid grid-cols-1 sm:grid-cols-2 place-items-center w-full h-full">
       <HomeImage/>
       <div className="flex flex-col items-center">
-        <div className="text-2xl text-primary mb-5 text-center">
+        <div className="sm:text-lg md:text-xl xl:text-2xl text-primary mb-5 text-center">
           <div>
             Добро пожаловать в <b>EngQuest</b> – ваше легендарное приключение по изучению английского языка!
           </div>

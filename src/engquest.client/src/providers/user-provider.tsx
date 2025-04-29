@@ -57,7 +57,7 @@ function logout() {
 }
 
 function account() {
-  window.open("http://localhost:18080/realms/engquest/account");
+  window.open(import.meta.env.VITE_AUTH_URL + "/realms/engquest/account");
 }
 
 export async function getUsers(): Promise<User[]> {
