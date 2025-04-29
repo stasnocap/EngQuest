@@ -18,7 +18,7 @@
 }
 
 @media (min-width: 768px) {
-  .info-ul {
+  .info ul {
     padding-left: 40px;
   }
 }
