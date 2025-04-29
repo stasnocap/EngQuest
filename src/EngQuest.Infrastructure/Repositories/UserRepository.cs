@@ -66,7 +66,7 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : Repositor
     public async Task<List<UserResponse>> GetAllAsync(IDbConnection dbConnection, CancellationToken cancellationToken)
     {
         const string sql = """
-                            SELECT u.id, u.first_name, u.last_name, u.email, l.level as Value, l.level_xp as Experience
+                            SELECT u.id, u.first_name, u.last_name, l.level as Value, l.level_xp as Experience
                             FROM users u
                             JOIN levels l on l.user_id = u.id
                             ORDER BY l.level_xp DESC;

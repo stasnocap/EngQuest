@@ -173,10 +173,8 @@ export default function Leaderboard() {
             classNames={{
               description: "text-default-500",
             }}
-            description={user.email}
             name={`${user.firstName} ${user.lastName}`}
           >
-            {user.email}
           </User>
         );
       case "id":
