@@ -80,7 +80,7 @@ public sealed class Level : Entity
 
         result.GainedExperience = gainedExperience;
 
-        if (Experience > 50 * Math.Pow(Value + 1, 2.2))
+        if (Experience >= Value * 100 * (10 + 2 * Value))
         {
             Value++;
             result.NewLevel = true;

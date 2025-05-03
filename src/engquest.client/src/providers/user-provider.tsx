@@ -30,8 +30,9 @@ interface UserContextType {
 // Create the UserContext
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const experienceToAchiveFirstLevel = 228;
 export const experiencePerFirstQuest = 12;
+const successfullCompletesToAchieveFirstLevel = 100;
+export const experienceToAchiveFirstLevel = experiencePerFirstQuest * successfullCompletesToAchieveFirstLevel;
 
 function getOrCreateUnauthorizedLevel(): Level {
   const levelString = localStorage.getItem("level");

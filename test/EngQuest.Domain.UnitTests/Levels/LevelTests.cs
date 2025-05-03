@@ -35,7 +35,7 @@ public class LevelTests(ITestOutputHelper testOutputHelper)
         // Arrange
         var level = Level.One();
 
-        for (int i = 1; i <= 50; i++)
+        for (int i = 1; i <= 100; i++)
         {
             if (level.GainExperience(i).NewLevel)
             {
